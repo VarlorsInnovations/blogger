@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Backend.Data;
+using Backend.Interceptors;
+using Microsoft.Extensions.Options;
 
 namespace Backend;
 
@@ -44,8 +46,10 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
+        app.UseMiddleware<RegisterInterceptor>();
         app.UseRouting();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapRazorPages();
