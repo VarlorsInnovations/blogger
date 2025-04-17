@@ -1,14 +1,19 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace Backend.Models;
 
+[Table("posts")]
 public sealed class Post
 {
-    public int Id { get; }
+    [Key]
+    public int Id { get; set; }
 
-    public string Title { get; }
+    public string Title { get; set; }
 
-    public List<Tag> Tags { get; }
+    public List<Tag> Tags { get; set; }
 
-    public string Content { get; }
+    public string Content { get; set; }
 
-    public DateTime CreatedAt { get; }
+    public DateTime CreatedAt { get; set; }
 }
