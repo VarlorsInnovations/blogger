@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Backend.Data;
 using Backend.Interceptors;
-using Microsoft.Extensions.Options;
 
 namespace Backend;
 

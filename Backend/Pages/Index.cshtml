@@ -4,6 +4,52 @@
     ViewData["Title"] = "Homepage";
 }
 
+<img src="."  alt="me with rings"/>
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
+    <p>
+        Here i will discuss my experience with depression. How i got into the sickness 
+        and went through hell before i came back to life.
+    </p>
+    <div>
+        <h2>Recent posts:</h2>
+        @foreach (var recent in @Model.RecentPosts)
+        {
+            <section class="post-overview">
+                <h2><a asp-page="./Post" asp-route-id="@recent.Id">@recent.Title</a></h2>
+                <h4>Published at @recent.CreatedAt</h4>
+                <section class="tag-section">
+                    @foreach (var tag in recent.Tags)
+                    {
+                        <div class="tag">@tag</div>
+                    }
+                </section>
+                <p class="post-summary">
+                    @recent.Summary
+                </p>
+            </section>
+        }
+    </div>
+    <div class="target-audience">
+        
+    </div>
+    <div>
+        <h2>Most viewed: </h2>
+        @foreach (var mostViewed in @Model.MostViewedPosts)
+        {
+            <section class="post-overview">
+                <h2><a asp-page="./Post" asp-route-id="@mostViewed.Id">@mostViewed.Title</a></h2>
+                <h4>Published at @mostViewed.CreatedAt</h4>
+                <section class="tag-section">
+                    @foreach (var tag in mostViewed.Tags)
+                    {
+                        <div class="tag">@tag</div>
+                    }
+                </section>
+                <p class="post-summary">
+                    @mostViewed.Summary
+                </p>
+            </section>
+        }
+    </div>
 </div>
