@@ -1,4 +1,5 @@
 @page "{id:int}"
+@using Backend.Html
 @model PostModel
 @{
     ViewData["Title"] = $"{Model.Post!.Title}";
@@ -8,9 +9,12 @@
 <section class="tag-section">
     @foreach (var tag in @Model.Post!.Tags)
     {
-        <div class="tag">@tag.Content</div>
+        <div class="tag">@tag</div>
     }
     <div>
-        @Model.Post.Content 
+        @foreach (var part in @Model.Post!.Parts)
+        {
+            @HtmlFactory.GenerateHtml(part)
+        }
     </div>
 </section>

@@ -10,6 +10,8 @@ public sealed class ApplicationDbContext : IdentityDbContext
     
     public DbSet<Tag> Tags { get; set; }
     
+    public DbSet<ContentPart> ContentParts { get; set; }
+    
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
