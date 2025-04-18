@@ -1,0 +1,26 @@
+@page "{searchTerm?}"
+@model SearchModel
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h1>Search</h1>
+<form>
+    <input type="text" class="search-box" asp-for="SearchTerm" />
+    <input type="submit" value="Search" />
+</form>
+<div class="search-results">
+    @if (Model.SearchResult is not null)
+    {
+        @foreach (var post in Model.SearchResult)
+        {
+            <div class="post">
+                <h2>@post.Title</h2>
+                <p>Post was created at @post.CreatedAt</p>
+                <p>
+                    @post.Summary
+                </p>
+            </div>
+        }
+    }
+</div>

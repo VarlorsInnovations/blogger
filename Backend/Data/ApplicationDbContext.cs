@@ -12,6 +12,8 @@ public sealed class ApplicationDbContext : IdentityDbContext
     
     public DbSet<ContentPart> ContentParts { get; set; }
     
+    public DbSet<PostRelation> PostRelations { get; set; }
+    
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {

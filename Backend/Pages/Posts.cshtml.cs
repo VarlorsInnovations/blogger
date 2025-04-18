@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Backend.Pages;
 
-public sealed class PostPrviewModel
+public sealed class PostPreviewModel
 {
     public int Id { get; }
 
@@ -17,7 +17,7 @@ public sealed class PostPrviewModel
     
     public DateTime CreatedAt { get; }
 
-    public PostPrviewModel(
+    public PostPreviewModel(
         int id,
         string title,
         string summary,
@@ -41,7 +41,7 @@ public class PostsModel : PageModel
     // public List<PostViewModel> Items => _dbContext.Posts.Select(
     //     x => new PostViewModel(x.Id, x.Title, x.Content, x.Tags, x.CreatedAt)).ToList(); 
     
-    public List<PostPrviewModel> Items => [
+    public List<PostPreviewModel> Items => [
         new(1, "Title 1", "Summary 1", ["Tools", "Healing"], DateTime.UtcNow),
         new(2, "Title 2", "Summary 2", ["Tipps", "Healing"], DateTime.UtcNow)
     ]; 
