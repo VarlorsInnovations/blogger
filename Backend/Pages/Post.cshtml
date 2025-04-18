@@ -1,0 +1,16 @@
+@page "{id:int}"
+@model PostModel
+@{
+    ViewData["Title"] = $"{Model.Post!.Title}";
+}
+
+<h1>@Model.Post!.Title</h1>
+<section class="tag-section">
+    @foreach (var tag in @Model.Post!.Tags)
+    {
+        <div class="tag">@tag.Content</div>
+    }
+    <div>
+        @Model.Post.Content 
+    </div>
+</section>

@@ -1,9 +1,26 @@
 @page
-@model IndexModel
+@model PostsModel
 @{
     ViewData["Title"] = "Posts";
 }
 
 <div class="text-center">
     <h1 class="display-4">Here you find the posts</h1>
+    
+    @foreach (var post in Model.Items)
+    {
+        <section class="post-overview">
+            <h2><a asp-page="./Post" asp-route-id="@post.Id">@post.Title</a></h2>
+            <h4>Published at @post.CreatedAt</h4>
+            <section class="tag-section">
+                @foreach (var tag in post.Tags)
+                {
+                    <div class="tag">@tag</div>
+                }
+            </section>
+            <p class="post-summary">
+                @post.Summary
+            </p>
+        </section>
+    }
 </div>
