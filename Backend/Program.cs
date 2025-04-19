@@ -17,6 +17,8 @@ public class Program
         
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseInMemoryDatabase(connectionString));
+
+        builder.Services.AddControllers();
         
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -51,6 +53,7 @@ public class Program
         app.UseAuthorization();
 
         app.MapRazorPages();
+        app.MapDefaultControllerRoute();
 
         app.Run();
     }

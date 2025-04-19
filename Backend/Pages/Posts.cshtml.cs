@@ -11,6 +11,8 @@ public sealed class PostPreviewModel
     public int Id { get; }
 
     public string Title { get; }
+    
+    public string UrlIdentifier { get; }
 
     public string Summary { get; }
 
@@ -22,6 +24,7 @@ public sealed class PostPreviewModel
         int id,
         string title,
         string summary,
+        string urlIdentifier,
         List<string> tags,
         DateTime createdAt)
     {
@@ -29,6 +32,7 @@ public sealed class PostPreviewModel
         Title = title;
         Summary = summary;
         Tags = tags;
+        UrlIdentifier = urlIdentifier;
         CreatedAt = createdAt;
     }
 }
@@ -51,7 +55,8 @@ public class PostsModel : PageModel
                     x.Id, 
                     x.Title,
                     x.Summary,
-                    x.Tags.Select(t => t.Tag.Content).ToList(), x.CreatedAt))
+                    x.UrlIdentifier,
+                    x.Tags.Select(t => t.Content).ToList(), x.CreatedAt))
             .ToListAsync();
         
         return Page();

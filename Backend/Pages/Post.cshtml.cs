@@ -18,19 +18,23 @@ public sealed class PostViewModel
     public DateTime CreatedAt { get; }
     
     public List<ContentPart> Parts { get; }
+    
+    public List<PostPreviewModel> RelatedPosts { get; }
 
     public PostViewModel(
         int id,
         string title,
         List<string> tags,
         DateTime createdAt,
-        List<ContentPart> parts)
+        List<ContentPart> parts,
+        List<PostPreviewModel> relatedPosts)
     {
         Id = id;
         Title = title;
         Tags = tags;
         CreatedAt = createdAt;
         Parts = parts;
+        RelatedPosts = relatedPosts;
     }
 }
 
@@ -43,7 +47,7 @@ public class PostModel : PageModel
 
     [BindProperty] public PostViewModel? Post { get; private set; }
     
-    public async Task<IActionResult> OnGetAsync(int? id)
+    public async Task<IActionResult> OnGetAsync(string? id)
     {
         if (id is null)
         {
@@ -51,10 +55,9 @@ public class PostModel : PageModel
         }
         
         Post? post = await _dbContext.Posts
-            .Include(post => post.Tags)
-            .ThenInclude(postTag => postTag.Tag)
             .Include(post => post.Parts)
-            .FirstOrDefaultAsync(x => x.Id == id);
+            .Include(post => post.Tags)
+            .FirstOrDefaultAsync(x => x.UrlIdentifier == id);
         
         if (post is null)
         {
@@ -64,7 +67,17 @@ public class PostModel : PageModel
         Post = new PostViewModel(
             post.Id,
             post.Title, 
-            post.Tags.Select(x => x.Tag.Content).ToList(), post.CreatedAt, post.Parts);
+            post.Tags.Select(x => x.Content).ToList(),
+            post.CreatedAt, 
+            post.Parts,
+            post.Relations.Select(x => new PostPreviewModel(
+                x.Id, 
+                x.Title, 
+                x.Summary,
+                x.UrlIdentifier,
+                x.Tags.Select(t => t.Content).ToList(),
+                x.CreatedAt)).ToList());
+        
         return Page();
     }
 }

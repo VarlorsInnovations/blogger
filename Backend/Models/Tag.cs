@@ -11,5 +11,5 @@ public sealed class Tag
 
     public string Content { get; set; }
 
-    public List<PostTag> PostTags { get; set; }
+    public List<Post> Posts { get; set; }
 }

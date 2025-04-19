@@ -25,7 +25,13 @@ public class SearchModel : PageModel
         }
 
         SearchResult = await _dbContext.Posts
-            .Select(x => new PostPreviewModel(x.Id, x.Title, x.Summary, x.Tags.Select(t => t.Tag.Content).ToList(), x.CreatedAt))
+            .Select(x => new PostPreviewModel(
+                x.Id, 
+                x.Title, 
+                x.Summary,
+                x.UrlIdentifier,
+                x.Tags.Select(t => t.Content).ToList(), 
+                x.CreatedAt))
             .Where(x => x.Title.ToLower().Contains(SearchTerm.ToLower()))
             .Where(x => x.Tags.Select(t => t.ToLower()).Contains(SearchTerm.ToLower()))
             .ToListAsync();

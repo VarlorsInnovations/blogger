@@ -9,6 +9,8 @@ public sealed class ApplicationDbContext : IdentityDbContext<User, Role, int>
     public DbSet<Post> Posts { get; set; }
     
     public DbSet<Tag> Tags { get; set; }
+
+    public DbSet<PostTag> PostTags { get; set; }
     
     public DbSet<ContentPart> ContentParts { get; set; }
     
@@ -22,9 +24,7 @@ public sealed class ApplicationDbContext : IdentityDbContext<User, Role, int>
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
-        builder.Entity<PostRelation>()
-            .HasOne(p => p.RelatedPost)
-            .WithMany(x => x.Relations)
-            .HasForeignKey(x => x.RelatedId);
+        builder.Entity<Post>()
+            .HasMany<Post>(x => x.Relations);
     }
 }

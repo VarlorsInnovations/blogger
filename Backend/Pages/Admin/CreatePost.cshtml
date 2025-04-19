@@ -1,0 +1,27 @@
+@page
+@model CreatePostModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="create-post-space">
+    <section class="tags-overview">
+        <h2>Available tags: </h2>
+        @foreach (var tag in Model.Tags)
+        {
+            <div class="tag">
+                @tag
+            </div>
+        }
+    </section>
+    <section class="creation-space">
+        <h2>Create a new post: </h2>
+        <form method="post">
+            <label for="title-input">Title: </label>
+            <input type="text" id="title-input"/>
+            
+            <input type="submit" value="Create"/>
+        </form>
+    </section>
+</div>

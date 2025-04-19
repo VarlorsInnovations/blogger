@@ -16,8 +16,8 @@
         @foreach (var recent in @Model.RecentPosts)
         {
             <section class="post-overview">
-                <h2><a asp-page="./Post" asp-route-id="@recent.Id">@recent.Title</a></h2>
-                <h4>Published at @recent.CreatedAt</h4>
+                <h2><a asp-page="./Post" asp-route-id="@recent.UrlIdentifier">@recent.Title</a></h2>
+                <h4>Published at @recent.CreatedAt.ToString("MM/dd/yyyy")</h4>
                 <section class="tag-section">
                     @foreach (var tag in recent.Tags)
                     {
@@ -38,8 +38,8 @@
         @foreach (var mostViewed in @Model.MostViewedPosts)
         {
             <section class="post-overview">
-                <h2><a asp-page="./Post" asp-route-id="@mostViewed.Id">@mostViewed.Title</a></h2>
-                <h4>Published at @mostViewed.CreatedAt</h4>
+                <h2><a asp-page="./Post" asp-route-id="@mostViewed.UrlIdentifier">@mostViewed.Title</a></h2>
+                <h4>Published at @mostViewed.CreatedAt.ToString("MM/dd/yyyy")</h4>
                 <section class="tag-section">
                     @foreach (var tag in mostViewed.Tags)
                     {

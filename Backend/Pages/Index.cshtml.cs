@@ -26,15 +26,20 @@ public class IndexModel : PageModel
     {
         RecentPosts = await _dbContext.Posts
             .Where(x => x.CreatedAt >= DateTime.UtcNow.AddDays(-10))
-            .Select(x => new PostPreviewModel(x.Id, x.Title, x.Summary, x.Tags.Select(y => y.Tag.Content).ToList(), x.CreatedAt))
+            .Select(x => new PostPreviewModel(
+                x.Id, 
+                x.Title, 
+                x.Summary, 
+                x.UrlIdentifier,
+                x.Tags.Select(y => y.Content).ToList(), x.CreatedAt))
             .ToListAsync();
         
         // todo: impl. most viewed posts (rating system)
         
         MostViewedPosts =
         [
-            new PostPreviewModel(1, "My experience with depressions", "my summary", ["depression"], DateTime.UtcNow),
-            new PostPreviewModel(2, "Tips for parents", "my summary2", ["info"], DateTime.UtcNow),
+            new PostPreviewModel(1, "My experience with depressions", "my summary", "depression-experience", ["depression"], DateTime.UtcNow),
+            new PostPreviewModel(2, "Tips for parents", "my summary2", "tips-and-tricks", ["info"], DateTime.UtcNow),
         ];
         
         await Task.CompletedTask;

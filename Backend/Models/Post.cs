@@ -8,16 +8,20 @@ public sealed class Post
 {
     [Key]
     public int Id { get; set; }
+
+    public string UrlIdentifier { get; set; }
     
     public string Title { get; set; }
     
     public string Summary { get; set; }
 
-    public List<PostTag> Tags { get; set; }
+    public List<Tag> Tags { get; set; }
 
     public List<ContentPart> Parts { get; set; }
     
-    public List<PostRelation> Relations { get; set; }
+    public List<Post> Relations { get; set; }
+
+    public bool IsPublished { get; set; } = false;
 
     public DateTime CreatedAt { get; set; }
 }
