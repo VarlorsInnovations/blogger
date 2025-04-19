@@ -2,19 +2,32 @@
 @using Backend.Html
 @model PostModel
 @{
-    ViewData["Title"] = $"{Model.Post!.Title}";
+    ViewData["Title"] = $"{Model.Post?.Title ?? "Not found"}";
 }
 
-<h1>@Model.Post!.Title</h1>
-<section class="tag-section">
-    @foreach (var tag in @Model.Post!.Tags)
-    {
-        <div class="tag">@tag</div>
-    }
-    <div>
-        @foreach (var part in @Model.Post!.Parts)
+@if (Model.Post is null)
+{
+    <h1>404 - Post not found</h1>
+    <p>
+        You have not found what you where looking for. 
+        Maybe my most viewed post could interest you.
+        
+        <!-- todo: implement most recent or most viewed posts -->
+    </p>
+}
+else 
+{
+    <h1>@Model.Post!.Title</h1>
+    <section class="tag-section">
+        @foreach (var tag in @Model.Post!.Tags)
         {
-            @HtmlFactory.GenerateHtml(part)
+            <div class="tag">@tag</div>
         }
-    </div>
-</section>
+        <div>
+            @foreach (var part in @Model.Post!.Parts)
+            {
+                @HtmlFactory.GenerateHtml(part)
+            }
+        </div>
+    </section>
+}

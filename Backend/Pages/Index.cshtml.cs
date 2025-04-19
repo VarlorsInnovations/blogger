@@ -1,6 +1,7 @@
 using Backend.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Pages;
 
@@ -23,18 +24,12 @@ public class IndexModel : PageModel
     
     public async Task<IActionResult> OnGetAsync()
     {
-        // RecentPosts = await _dbContext.Posts
-        //     .Where(x => x.CreatedAt >= DateTime.UtcNow.AddDays(-10))
-        //     .Select(x => new PostPreviewModel(x.Id, x.Title, x.Summary, x.Tags.Select(y => y.Tag.Content).ToList(), x.CreatedAt))
-        //     .ToListAsync();
-        //
-        // todo: impl. most viewed posts 
-
-        RecentPosts =
-        [
-            new PostPreviewModel(1, "Title1", "my summary", ["depression"], DateTime.UtcNow),
-            new PostPreviewModel(2, "Title2", "my summary2", ["info"], DateTime.UtcNow),
-        ];
+        RecentPosts = await _dbContext.Posts
+            .Where(x => x.CreatedAt >= DateTime.UtcNow.AddDays(-10))
+            .Select(x => new PostPreviewModel(x.Id, x.Title, x.Summary, x.Tags.Select(y => y.Tag.Content).ToList(), x.CreatedAt))
+            .ToListAsync();
+        
+        // todo: impl. most viewed posts (rating system)
         
         MostViewedPosts =
         [

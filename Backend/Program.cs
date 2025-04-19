@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Backend.Data;
 using Backend.Interceptors;
+using Backend.Models;
 
 namespace Backend;
 
@@ -16,15 +16,14 @@ public class Program
                                throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlite(connectionString));
+            options.UseInMemoryDatabase(connectionString));
         
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-        builder.Services.AddDefaultIdentity<IdentityUser>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = true;
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+        builder.Services.AddIdentity<User, Role>(options =>
+        {
+            options.SignIn.RequireConfirmedAccount = true;
+        }).AddEntityFrameworkStores<ApplicationDbContext>();
         
         builder.Services.AddRazorPages();
 

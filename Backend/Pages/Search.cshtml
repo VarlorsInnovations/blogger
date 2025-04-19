@@ -14,13 +14,19 @@
     {
         @foreach (var post in Model.SearchResult)
         {
-            <div class="post">
-                <h2>@post.Title</h2>
-                <p>Post was created at @post.CreatedAt</p>
-                <p>
+            <section class="post-overview">
+                <h2><a asp-page="./Post" asp-route-id="@post.Id">@post.Title</a></h2>
+                <h4>Published at @post.CreatedAt</h4>
+                <section class="tag-section">
+                    @foreach (var tag in post.Tags)
+                    {
+                        <div class="tag">@tag</div>
+                    }
+                </section>
+                <p class="post-summary">
                     @post.Summary
                 </p>
-            </div>
+            </section>
         }
     }
 </div>

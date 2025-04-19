@@ -1,6 +1,7 @@
 using Backend.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Pages;
 
@@ -23,15 +24,11 @@ public class SearchModel : PageModel
             return Page();
         }
 
-        await Task.CompletedTask;
-
-        SearchResult =
-        [
-            new PostPreviewModel(1, "Talking about depressions", "This is about my past with depressions",
-                ["depression"], DateTime.UtcNow),
-            new PostPreviewModel(1, "Talking about depressions", "This is about my past with depressions",
-                ["depression"], DateTime.UtcNow)
-        ];
+        SearchResult = await _dbContext.Posts
+            .Select(x => new PostPreviewModel(x.Id, x.Title, x.Summary, x.Tags.Select(t => t.Tag.Content).ToList(), x.CreatedAt))
+            .Where(x => x.Title.ToLower().Contains(SearchTerm.ToLower()))
+            .Where(x => x.Tags.Select(t => t.ToLower()).Contains(SearchTerm.ToLower()))
+            .ToListAsync();
         
         return Page();
     }

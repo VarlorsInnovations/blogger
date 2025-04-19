@@ -2,6 +2,7 @@ using Backend.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Pages;
 
@@ -38,16 +39,21 @@ public class PostsModel : PageModel
 {
     private readonly ApplicationDbContext _dbContext;
 
-    // public List<PostViewModel> Items => _dbContext.Posts.Select(
-    //     x => new PostViewModel(x.Id, x.Title, x.Content, x.Tags, x.CreatedAt)).ToList(); 
-    
-    public List<PostPreviewModel> Items => [
-        new(1, "Title 1", "Summary 1", ["Tools", "Healing"], DateTime.UtcNow),
-        new(2, "Title 2", "Summary 2", ["Tipps", "Healing"], DateTime.UtcNow)
-    ]; 
+    public List<PostPreviewModel> Items { get; private set; }
 
     public PostsModel(ApplicationDbContext dbContext)
         => _dbContext = dbContext;
     
-    public IActionResult OnGet() => Page();
+    public async Task<IActionResult> OnGetAsync()
+    {
+        Items = await _dbContext.Posts.Select(
+                x => new PostPreviewModel(
+                    x.Id, 
+                    x.Title,
+                    x.Summary,
+                    x.Tags.Select(t => t.Tag.Content).ToList(), x.CreatedAt))
+            .ToListAsync();
+        
+        return Page();
+    }
 }

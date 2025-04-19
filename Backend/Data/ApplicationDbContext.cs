@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Data;
 
-public sealed class ApplicationDbContext : IdentityDbContext
+public sealed class ApplicationDbContext : IdentityDbContext<User, Role, int>
 {
     public DbSet<Post> Posts { get; set; }
     
@@ -17,5 +17,14 @@ public sealed class ApplicationDbContext : IdentityDbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+        builder.Entity<PostRelation>()
+            .HasOne(p => p.RelatedPost)
+            .WithMany(x => x.Relations)
+            .HasForeignKey(x => x.RelatedId);
     }
 }

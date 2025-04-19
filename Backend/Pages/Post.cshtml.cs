@@ -3,6 +3,7 @@ using Backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Pages;
 
@@ -39,9 +40,8 @@ public class PostModel : PageModel
     private readonly ApplicationDbContext _dbContext;
     
     public PostModel(ApplicationDbContext dbContext) => _dbContext = dbContext;
-    
-    [BindProperty]
-    public PostViewModel? Post { get; private set; }
+
+    [BindProperty] public PostViewModel? Post { get; private set; }
     
     public async Task<IActionResult> OnGetAsync(int? id)
     {
@@ -50,21 +50,21 @@ public class PostModel : PageModel
             return NotFound();
         }
         
-        // Post = await _dbContext.Posts.FirstOrDefaultAsync(x => x.Id == id);
-        Post = new PostViewModel(
-            1, 
-            "Talking about depressions", 
-            ["Depression"], 
-            DateTime.UtcNow,
-            [
-                new ContentPart() { Id = 1, Content = "In this post i take you on a journey and share my experience with depression.", Type=ContentPartType.Heading1}
-            ]);
+        Post? post = await _dbContext.Posts
+            .Include(post => post.Tags)
+            .ThenInclude(postTag => postTag.Tag)
+            .Include(post => post.Parts)
+            .FirstOrDefaultAsync(x => x.Id == id);
         
-        if (Post is null) 
+        if (post is null)
         {
-            return NotFound();
+            return Page();
         }
-
+    
+        Post = new PostViewModel(
+            post.Id,
+            post.Title, 
+            post.Tags.Select(x => x.Tag.Content).ToList(), post.CreatedAt, post.Parts);
         return Page();
     }
 }
