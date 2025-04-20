@@ -3,6 +3,7 @@
 @model PostModel
 @{
     ViewData["Title"] = $"{Model.Post?.Title ?? "Not found"}";
+    ViewData["Description"] = $"{Model.Post?.Summary ?? "This post does not exists"}";
 }
 
 @if (Model.Post is null)
@@ -11,7 +12,6 @@
     <p>
         You have not found what you where looking for.<br />
         Maybe my most viewed post could interest you.
-        
         <!-- todo: implement most recent or most viewed posts -->
     </p>
 }
@@ -23,7 +23,7 @@ else
         {
             <div class="tag">@tag</div>
         }
-        <div>
+        <div class="post-content">
             @foreach (var part in @Model.Post!.Parts)
             {
                 @HtmlFactory.GenerateHtml(part)

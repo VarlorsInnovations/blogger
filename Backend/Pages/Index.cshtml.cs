@@ -1,4 +1,5 @@
 using Backend.Data;
+using Backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,9 @@ public class IndexModel : PageModel
     [BindProperty] public List<PostPreviewModel> RecentPosts { get; private set; }
 
     [BindProperty] public List<PostPreviewModel> MostViewedPosts { get; private set; }
-    
+
+    [BindProperty] public List<User> Users { get; private set; }
+
     public IndexModel(
         ApplicationDbContext dbContext,
         ILogger<IndexModel> logger)
@@ -34,6 +37,7 @@ public class IndexModel : PageModel
                 x.Tags.Select(y => y.Content).ToList(), x.CreatedAt))
             .ToListAsync();
         
+        Users = await _dbContext.Users.ToListAsync();
         // todo: impl. most viewed posts (rating system)
         
         MostViewedPosts =

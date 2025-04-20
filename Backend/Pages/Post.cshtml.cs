@@ -13,6 +13,8 @@ public sealed class PostViewModel
 
     public string Title { get; }
     
+    public string Summary { get; }
+    
     public List<string> Tags { get; }
 
     public DateTime CreatedAt { get; }
@@ -24,6 +26,7 @@ public sealed class PostViewModel
     public PostViewModel(
         int id,
         string title,
+        string summary,
         List<string> tags,
         DateTime createdAt,
         List<ContentPart> parts,
@@ -31,6 +34,7 @@ public sealed class PostViewModel
     {
         Id = id;
         Title = title;
+        Summary = summary;
         Tags = tags;
         CreatedAt = createdAt;
         Parts = parts;
@@ -67,6 +71,7 @@ public class PostModel : PageModel
         Post = new PostViewModel(
             post.Id,
             post.Title, 
+            post.Summary,
             post.Tags.Select(x => x.Content).ToList(),
             post.CreatedAt, 
             post.Parts,

@@ -17,15 +17,23 @@ public class Program
         
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
             options.UseInMemoryDatabase(connectionString));
-
+        
         builder.Services.AddControllers();
         
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
+        
         builder.Services.AddIdentity<User, Role>(options =>
         {
             options.SignIn.RequireConfirmedAccount = true;
-        }).AddEntityFrameworkStores<ApplicationDbContext>();
+        })
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+        
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = $"/Identity/Account/Login";
+            options.LogoutPath = $"/Identity/Account/Logout";
+            options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+        });
         
         builder.Services.AddRazorPages();
 
@@ -47,6 +55,7 @@ public class Program
         app.UseStaticFiles();
 
         app.UseMiddleware<RegisterInterceptor>();
+        app.UseMiddleware<CreateUserInterceptor>(); // todo: for testing only. remove in production
         app.UseRouting();
 
         app.UseAuthentication();

@@ -2,6 +2,7 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Homepage";
+    ViewData["Description"] = "Welcome to the depression book";
 }
 
 <img src="."  alt="me with rings"/>
@@ -13,7 +14,7 @@
     </p>
     <div>
         <h2>Recent posts:</h2>
-        @foreach (var recent in @Model.RecentPosts)
+        @foreach (PostPreviewModel recent in @Model.RecentPosts)
         {
             <section class="post-overview">
                 <h2><a asp-page="./Post" asp-route-id="@recent.UrlIdentifier">@recent.Title</a></h2>
@@ -35,7 +36,7 @@
     </div>
     <div>
         <h2>Most viewed: </h2>
-        @foreach (var mostViewed in @Model.MostViewedPosts)
+        @foreach (PostPreviewModel mostViewed in @Model.MostViewedPosts)
         {
             <section class="post-overview">
                 <h2><a asp-page="./Post" asp-route-id="@mostViewed.UrlIdentifier">@mostViewed.Title</a></h2>
