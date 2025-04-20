@@ -61,13 +61,23 @@ public class PostModel : PageModel
         Post? post = await _dbContext.Posts
             .Include(post => post.Parts)
             .Include(post => post.Tags)
+            .Include(post => post.Relations)
+            .ThenInclude(post => post.Tags)
             .FirstOrDefaultAsync(x => x.UrlIdentifier == id);
         
         if (post is null)
         {
             return Page();
         }
-    
+
+        List<PostPreviewModel> relations = post.Relations.Select(x => new PostPreviewModel(
+            x.Id,
+            x.Title,
+            x.Summary,
+            x.UrlIdentifier,
+            x.Tags.Select(t => t.Content).ToList(),
+            x.CreatedAt)).ToList();
+        
         Post = new PostViewModel(
             post.Id,
             post.Title, 
@@ -75,13 +85,7 @@ public class PostModel : PageModel
             post.Tags.Select(x => x.Content).ToList(),
             post.CreatedAt, 
             post.Parts,
-            post.Relations.Select(x => new PostPreviewModel(
-                x.Id, 
-                x.Title, 
-                x.Summary,
-                x.UrlIdentifier,
-                x.Tags.Select(t => t.Content).ToList(),
-                x.CreatedAt)).ToList());
+            relations);
         
         return Page();
     }

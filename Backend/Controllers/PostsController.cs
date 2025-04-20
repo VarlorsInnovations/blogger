@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using Backend.Data;
 using Backend.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -42,18 +43,23 @@ public class PostsController : ControllerBase
         // bug: user puts in related posts that do not exist
         
         List<Tag> tags = await _dbContext.Tags.Where(x => data.Tags.Contains(x.Content)).ToListAsync();
-        List<Post> related = await _dbContext.Posts.Where(x => data.RelatedPosts.Contains(x.Id)).ToListAsync();
         
         if (tags.Count != data.Tags.Count)
         {
             return BadRequest("One of the tags doesn't exist!");
         }
 
-        if (related.Count != data.RelatedPosts.Count)
+        List<Post> related = [];
+        if (data.RelatedPosts is not null)
         {
-            return BadRequest("One of the related posts doesn't exist!");
-        }
+            related = await _dbContext.Posts.Where(x => data.RelatedPosts.Contains(x.Id)).ToListAsync();
 
+            if (related.Count != data.RelatedPosts!.Count)
+            {
+                return BadRequest("One of the related posts doesn't exist!");
+            }
+        }
+        
         Post post = new Post()
         {
             Title = data.Title,
@@ -96,16 +102,21 @@ public class PostsController : ControllerBase
         }
         
         List<Tag> tags = await _dbContext.Tags.Where(x => data.Tags.Contains(x.Content)).ToListAsync();
-        List<Post> related = await _dbContext.Posts.Where(x => data.RelatedPosts.Contains(x.Id)).ToListAsync();
+        
         
         if (tags.Count != data.Tags.Count)
         {
             return BadRequest("One of the tags doesn't exist!");
         }
 
-        if (related.Count != data.RelatedPosts.Count)
+        List<Post> related = [];
+        if (data.RelatedPosts is not null)
         {
-            return BadRequest("One of the related posts doesn't exist!");
+            related = await _dbContext.Posts.Where(x => data.RelatedPosts.Contains(x.Id)).ToListAsync();
+            if (related.Count != data.RelatedPosts!.Count)
+            {
+                return BadRequest("One of the related posts doesn't exist!");
+            }
         }
         
         // todo: how to make uploads for images, etc 
@@ -178,7 +189,7 @@ public sealed class PostTransferObject
     [MinLength(1)]
     public List<PostContentParts> Content { get; set; }
     
-    public List<int> RelatedPosts { get; set; }
+    public List<int>? RelatedPosts { get; set; }
 
     public bool IsPublished { get; set; } = false;
 }
@@ -187,6 +198,7 @@ public sealed class PostContentParts
 {
     public int Id { get; set; }
     
+    [JsonConverter(typeof(JsonStringEnumConverter<ContentPartType>))]
     public ContentPartType Type { get; set; }
 
     public string? Link { get; set; }

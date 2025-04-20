@@ -5,23 +5,44 @@
     ViewData["Title"] = "Create";
 }
 
-<div class="create-post-space">
-    <section class="tags-overview">
-        <h2>Available tags: </h2>
-        @foreach (var tag in Model.Tags)
-        {
-            <div class="tag">
-                @tag
-            </div>
-        }
-    </section>
+<div class="create-post-space" id="post-space">
     <section class="creation-space">
         <h2>Create a new post: </h2>
-        <form method="post">
-            <label for="title-input">Title: </label>
-            <input type="text" id="title-input"/>
-            
-            <input type="submit" value="Create"/>
-        </form>
+        <div id="post-main-elements">
+            <input type="text" id="post-title" placeholder="Title"/><br/>
+            <input type="text" id="post-identifier" placeholder="Url identifier"/><br/>
+            <textarea id="post-summary" placeholder="Summary"></textarea><br/>
+            <select id="tag-selection" multiple>
+                @foreach (string tag in Model.Tags)
+                {
+                    <option value="@tag" class="tag-entry">@tag</option>
+                }
+            </select><br/>
+            <label for="is-published-checkbox">Is published</label>
+            <input type="checkbox" id="is-published-checkbox"/>
+        </div>  
+        <div class="divider"></div>
+        <div id="content-creation-container">
+            <div id="create-element-button" style="width: 100px; height:  50px; background-color: #258cfb;">
+                <img src="~/static/plus.png" alt="plus-sign" width="20" height="20"/>
+            </div>
+            <button type="button" id="create-post-button">Create post</button>
+        </div>
+        <div class="related-posts-container">
+            <h2>Possible recent posts: </h2>
+            <section>
+            @foreach (var relatedPost in Model.RelatedPostPossibilities)
+            {
+                <div>
+                    <h3><input type="checkbox" id="@relatedPost.Id" class="related-post-select"/> @relatedPost.Title</h3>
+                    <p>
+                        @relatedPost.Summary
+                    </p>
+                </div>
+            }
+            </section>
+        </div>
     </section>
 </div>
+
+<script src="~/js/content-generator.js"></script>

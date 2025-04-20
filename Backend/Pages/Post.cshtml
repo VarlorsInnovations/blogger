@@ -17,6 +17,15 @@
 }
 else 
 {
+    <aside>
+        <h2>Related posts:</h2>
+        @foreach (var relatedPost in @Model.Post.RelatedPosts)
+        {
+            <div class="related-post-entry">
+                <h3><a asp-page="Post" asp-route-id="@relatedPost.UrlIdentifier">@relatedPost.Title</a></h3>
+            </div>
+        }
+    </aside>
     <h1>@Model.Post!.Title</h1>
     <section class="tag-section">
         @foreach (var tag in @Model.Post!.Tags)
