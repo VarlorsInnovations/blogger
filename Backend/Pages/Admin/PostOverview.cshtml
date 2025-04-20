@@ -1,0 +1,37 @@
+@page "/admin/overview"
+@model PostOverviewModel
+@{
+    ViewData["Title"] = $"Overview";
+    ViewData["Description"] = $"An overview of all the available posts";
+}
+
+<div class="post-list">
+    <h1>Overview:</h1>
+    <section class="overview-bar">
+        <a href="/admin/create-post" class="link-button">Create post</a>
+    </section>
+    <section>
+        <h2>Posts:</h2>
+        @foreach (PostPreviewModel post in Model.Posts)
+        {
+            <section id="@post.Id">
+                <h3><input type="checkbox" /> <a asp-page="/Post" asp-route-id="@post.UrlIdentifier">@post.Title</a></h3>
+                <button type="button" onclick="editPost(@post.Id)">Edit</button>
+                <button type="button" onclick="deletePostAsync(@post.Id)">Delete</button>
+            </section>
+        }
+    </section>
+    <script>
+        async function deletePostAsync(id) {
+            await fetch(`/api/Posts/${id}`, {
+                method: "DELETE",
+            })
+            
+            location.reload();
+        }
+        
+        function editPost(id) {
+            location.href = `/admin/edit-post/${id}`;
+        }
+    </script>
+</div>

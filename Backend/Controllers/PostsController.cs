@@ -80,78 +80,167 @@ public class PostsController : ControllerBase
     }
 
     [HttpPost("{postId}")]
-    public async Task<IActionResult> UpdatePostAsync([FromRoute]int id, [FromBody] PostTransferObject data)
+    public async Task<IActionResult> UpdateInfoAsync([FromRoute]int id, [FromBody]PostEditObject data)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest("Something is wrong with the provided data!");
         }
 
-        Post? post = await _dbContext.Posts.Include(post => post.Parts).FirstOrDefaultAsync(x => x.Id == id);
+        // todo: remove and/or add content parts 
+        // todo: remove and/or add tags 
+        // todo: remove and/or add related posts 
+        
+        Post? post = await _dbContext.Posts.Include(
+            post => post.Parts)
+            .FirstOrDefaultAsync(x => x.Id == id);
+        
         if (post is null)
         {
             return BadRequest($"Post with id {id} does not exist!");
         }
 
         if (_dbContext.Posts
-            .Where(x => x.Id == post.Id)
+            .Where(x => x.Id != post.Id)
             .Any(x => x.UrlIdentifier.ToLower() == data.UrlIdentifier.ToLower() ||
                       x.Title.ToLower() == data.UrlIdentifier.ToLower()))
         {
             return BadRequest("Post with same title or url identifier already exists!");
         }
         
-        List<Tag> tags = await _dbContext.Tags.Where(x => data.Tags.Contains(x.Content)).ToListAsync();
-        
-        
-        if (tags.Count != data.Tags.Count)
-        {
-            return BadRequest("One of the tags doesn't exist!");
-        }
-
-        List<Post> related = [];
-        if (data.RelatedPosts is not null)
-        {
-            related = await _dbContext.Posts.Where(x => data.RelatedPosts.Contains(x.Id)).ToListAsync();
-            if (related.Count != data.RelatedPosts!.Count)
-            {
-                return BadRequest("One of the related posts doesn't exist!");
-            }
-        }
-        
-        // todo: how to make uploads for images, etc 
-        
-        foreach (PostContentParts part in data.Content)
-        {
-            ContentPart? p = post.Parts.FirstOrDefault(x => x.Id == part.Id);
-
-            if (p is null)
-            {   
-                ContentPart created = new ContentPart { Content = part.Content, Type = part.Type, Link = part.Link };
-                post.Parts.Add(created);
-            }
-            else
-            {
-                p.Content = part.Content;
-                p.Type = part.Type;
-                p.Link = part.Link;
-            }
-        }
-        
         post.Title = data.Title;
         post.UrlIdentifier = data.UrlIdentifier;
         post.Summary = data.Summary;
         post.IsPublished = data.IsPublished;
-        post.Tags = tags;
-        post.Relations = related;
-
+        
         _dbContext.Posts.Update(post);
         await _dbContext.SaveChangesAsync();
         
         return Ok("Post update was successful!");
     }
 
-    [HttpDelete("{postId}")]
+    [HttpPost("{postId}/tags")]
+    public async Task<IActionResult> UpdateTagsAsync([FromRoute] int postId, [FromBody]PostRelationEdit<string> data)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("Something is wrong with the provided data!");
+        }
+        
+        var post = await _dbContext.Posts.Include(post => post.Tags).FirstOrDefaultAsync(x => x.Id == postId);
+
+        if (post is null)
+        {
+            return BadRequest($"Post with id {postId} does not exist!");
+        }
+
+        List<Tag> added = await _dbContext.Tags.Where(x => data.Add.Contains(x.Content)).ToListAsync();
+        List<Tag> removed = await _dbContext.Tags.Where(x => data.Remove.Contains(x.Content)).ToListAsync();
+        
+        foreach (var add in added)
+        {
+            if (!post.Tags.Contains(add))
+            {
+                post.Tags.Add(add);
+            }
+        }
+
+        foreach (var remove in removed)
+        {
+            if (post.Tags.Contains(remove))
+            {
+                post.Tags.Remove(remove);
+            }
+        }
+        
+        _dbContext.Posts.Update(post);
+        await _dbContext.SaveChangesAsync();
+        
+        return Ok("Update post tags was successful!");
+    }
+
+    [HttpPost("{postId}/related")]
+    public async Task<IActionResult> UpdateRelatedPostsAsync([FromRoute] int postId,
+        [FromBody] PostRelationEdit<int> data)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("Something is wrong with the provided data!");    
+        }
+        
+        var post = await _dbContext.Posts.FirstOrDefaultAsync(x => x.Id == postId);
+
+        if (post is null)
+        {
+            return BadRequest($"Post with id {postId} does not exist!");
+        }
+
+        if (data.Add.Contains(post.Id) || data.Remove.Contains(post.Id))
+        {
+            return BadRequest("Post can't relate to itself!");
+        }
+        
+        var added = await _dbContext.Posts.Where(x => data.Add.Contains(x.Id)).ToListAsync();
+        var removed = await _dbContext.Posts.Where(x => data.Remove.Contains(x.Id)).ToListAsync();
+
+        foreach (var add in added)
+        {
+            if (!post.Relations.Contains(add))
+            {
+                post.Relations.Add(add);
+            }
+        }
+
+        foreach (var remove in removed)
+        {
+            if (post.Relations.Contains(remove))
+            {
+                post.Relations.Remove(remove);
+            }
+        }
+        
+        _dbContext.Posts.Update(post);
+        await _dbContext.SaveChangesAsync();
+        
+        return Ok("Update related posts was successful!");
+    }
+
+    [HttpPost("{postId}/parts")]
+    public async Task<IActionResult> UpdatePostPartsAsync([FromRoute] int postId,
+        [FromBody] PostRelationEdit<int> data)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest("Something is wrong with the provided data!");
+        }
+        
+        var post = await _dbContext.Posts.FirstOrDefaultAsync(x => x.Id == postId);
+
+        if (post is null)
+        {
+            return BadRequest($"Post with id {postId} does not exist!");
+        }
+        
+        List<ContentPart> removed = await _dbContext.ContentParts.Where(x => data.Remove.Contains(x.Id)).ToListAsync();
+        
+        foreach (ContentPart remove in removed)
+        {
+            if (post.Parts.Contains(remove))
+            {
+                post.Parts.Remove(remove);
+            }
+        }
+        
+        // todo: linked list to preserve order of content parts 
+        // todo: allow add and edit of content parts 
+        
+        _dbContext.Posts.Update(post);
+        await _dbContext.SaveChangesAsync();
+        
+        return Ok("Update post parts was successful!");
+    }
+    
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePostAsync([FromRoute] int id)
     {
         Post? post = await _dbContext.Posts.FirstOrDefaultAsync(x => x.Id == id);
@@ -166,6 +255,31 @@ public class PostsController : ControllerBase
         
         return Ok();
     }
+}
+
+public sealed class PostRelationEdit<T>
+{
+    public List<T> Add { get; set; }
+
+    public List<T> Remove { get; set; }
+}
+
+public sealed class PostEditObject
+{
+    [Required]
+    [MinLength(10)]
+    public string Title { get; set; }
+
+    [Required]
+    [MinLength(5)]
+    public string UrlIdentifier { get; set; }
+
+    [Required]
+    [MinLength(20)]
+    public string Summary { get; set; }
+    
+    [Required]
+    public bool IsPublished { get; set; } = false;
 }
 
 public sealed class PostTransferObject
