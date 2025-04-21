@@ -47,7 +47,6 @@ async function createElement() {
     removeButton.addEventListener(
         "click", 
         () => {
-            console.log("remove button clicked");
             element.parentElement.removeChild(element);
         });
     

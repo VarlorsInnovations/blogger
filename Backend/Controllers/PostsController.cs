@@ -30,7 +30,7 @@ public class PostsController : ControllerBase
             return BadRequest("Something is wrong with the provided data!");
         }
         
-        var duplicate = await _dbContext.Posts.FirstOrDefaultAsync(
+        Post? duplicate = await _dbContext.Posts.FirstOrDefaultAsync(
             p => p.Title.ToLower() == data.Title.ToLower() ||
                  p.UrlIdentifier.ToLower() == data.UrlIdentifier.ToLower());
 
@@ -68,8 +68,7 @@ public class PostsController : ControllerBase
             CreatedAt = DateTime.UtcNow,
             IsPublished = data.IsPublished,
             Tags = tags,
-            Parts = data.Content.Select(x => new ContentPart { Content = x.Content, Type = x.Type, Link = x.Link })
-                .ToList(),
+            Parts = await _dbContext.ContentParts.Where(x => data.Content.Contains(x.Id)).ToListAsync(),
             Relations = related
         };
 
@@ -301,17 +300,15 @@ public sealed class PostTransferObject
 
     [Required]
     [MinLength(1)]
-    public List<PostContentParts> Content { get; set; }
+    public List<int> Content { get; set; }
     
     public List<int>? RelatedPosts { get; set; }
 
     public bool IsPublished { get; set; } = false;
 }
 
-public sealed class PostContentParts
+public sealed class PostContentPart
 {
-    public int Id { get; set; }
-    
     [JsonConverter(typeof(JsonStringEnumConverter<ContentPartType>))]
     public ContentPartType Type { get; set; }
 
