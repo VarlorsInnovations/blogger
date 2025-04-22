@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Backend.Data;
 using Backend.Interceptors;
 using Backend.Models;
+using Backend.Services;
 
 namespace Backend;
 
@@ -21,7 +22,7 @@ public class Program
         builder.Services.AddControllers();
         
         builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-        
+        builder.Services.AddScoped<VisitService>();
         builder.Services.AddIdentity<User, Role>(options =>
         {
             options.SignIn.RequireConfirmedAccount = true;

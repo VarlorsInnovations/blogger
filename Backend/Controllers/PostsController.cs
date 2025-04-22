@@ -11,16 +11,10 @@ namespace Backend.Controllers;
 [ApiController]
 [Authorize]
 [Route("api/[controller]")]
-public class PostsController : ControllerBase
+public class PostsController(ILogger<PostsController> logger, ApplicationDbContext dbContext)
+    : ControllerBase
 {
-    private readonly ILogger<PostsController> _logger;
-    private readonly ApplicationDbContext _dbContext;
-    
-    public PostsController(ILogger<PostsController> logger, ApplicationDbContext dbContext)
-    {
-        _logger = logger;
-        _dbContext = dbContext;
-    }
+    private readonly ILogger<PostsController> _logger = logger;
 
     [HttpPost]
     public async Task<IActionResult> CreatePostAsync([FromBody] PostTransferObject data)
@@ -30,7 +24,7 @@ public class PostsController : ControllerBase
             return BadRequest("Something is wrong with the provided data!");
         }
         
-        Post? duplicate = await _dbContext.Posts.FirstOrDefaultAsync(
+        Post? duplicate = await dbContext.Posts.FirstOrDefaultAsync(
             p => p.Title.ToLower() == data.Title.ToLower() ||
                  p.UrlIdentifier.ToLower() == data.UrlIdentifier.ToLower());
 
@@ -42,7 +36,7 @@ public class PostsController : ControllerBase
         // bug: user put in tags that do not exist
         // bug: user puts in related posts that do not exist
         
-        List<Tag> tags = await _dbContext.Tags.Where(x => data.Tags.Contains(x.Content)).ToListAsync();
+        List<Tag> tags = await dbContext.Tags.Where(x => data.Tags.Contains(x.Content)).ToListAsync();
         
         if (tags.Count != data.Tags.Count)
         {
@@ -52,7 +46,7 @@ public class PostsController : ControllerBase
         List<Post> related = [];
         if (data.RelatedPosts is not null)
         {
-            related = await _dbContext.Posts.Where(x => data.RelatedPosts.Contains(x.Id)).ToListAsync();
+            related = await dbContext.Posts.Where(x => data.RelatedPosts.Contains(x.Id)).ToListAsync();
 
             if (related.Count != data.RelatedPosts!.Count)
             {
@@ -68,12 +62,12 @@ public class PostsController : ControllerBase
             CreatedAt = DateTime.UtcNow,
             IsPublished = data.IsPublished,
             Tags = tags,
-            Parts = await _dbContext.ContentParts.Where(x => data.Content.Contains(x.Id)).ToListAsync(),
+            Parts = await dbContext.ContentParts.Where(x => data.Content.Contains(x.Id)).ToListAsync(),
             Relations = related
         };
 
-        await _dbContext.Posts.AddAsync(post);
-        await _dbContext.SaveChangesAsync();
+        await dbContext.Posts.AddAsync(post);
+        await dbContext.SaveChangesAsync();
         
         return Ok("Post creation was successful!");
     }
@@ -90,7 +84,7 @@ public class PostsController : ControllerBase
         // todo: remove and/or add tags 
         // todo: remove and/or add related posts 
         
-        Post? post = await _dbContext.Posts.Include(
+        Post? post = await dbContext.Posts.Include(
             post => post.Parts)
             .FirstOrDefaultAsync(x => x.Id == id);
         
@@ -99,7 +93,7 @@ public class PostsController : ControllerBase
             return BadRequest($"Post with id {id} does not exist!");
         }
 
-        if (_dbContext.Posts
+        if (dbContext.Posts
             .Where(x => x.Id != post.Id)
             .Any(x => x.UrlIdentifier.ToLower() == data.UrlIdentifier.ToLower() ||
                       x.Title.ToLower() == data.UrlIdentifier.ToLower()))
@@ -112,8 +106,8 @@ public class PostsController : ControllerBase
         post.Summary = data.Summary;
         post.IsPublished = data.IsPublished;
         
-        _dbContext.Posts.Update(post);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Posts.Update(post);
+        await dbContext.SaveChangesAsync();
         
         return Ok("Post update was successful!");
     }
@@ -126,15 +120,15 @@ public class PostsController : ControllerBase
             return BadRequest("Something is wrong with the provided data!");
         }
         
-        var post = await _dbContext.Posts.Include(post => post.Tags).FirstOrDefaultAsync(x => x.Id == postId);
+        var post = await dbContext.Posts.Include(post => post.Tags).FirstOrDefaultAsync(x => x.Id == postId);
 
         if (post is null)
         {
             return BadRequest($"Post with id {postId} does not exist!");
         }
 
-        List<Tag> added = await _dbContext.Tags.Where(x => data.Add.Contains(x.Content)).ToListAsync();
-        List<Tag> removed = await _dbContext.Tags.Where(x => data.Remove.Contains(x.Content)).ToListAsync();
+        List<Tag> added = await dbContext.Tags.Where(x => data.Add.Contains(x.Content)).ToListAsync();
+        List<Tag> removed = await dbContext.Tags.Where(x => data.Remove.Contains(x.Content)).ToListAsync();
         
         foreach (var add in added)
         {
@@ -152,8 +146,8 @@ public class PostsController : ControllerBase
             }
         }
         
-        _dbContext.Posts.Update(post);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Posts.Update(post);
+        await dbContext.SaveChangesAsync();
         
         return Ok("Update post tags was successful!");
     }
@@ -167,7 +161,7 @@ public class PostsController : ControllerBase
             return BadRequest("Something is wrong with the provided data!");    
         }
         
-        var post = await _dbContext.Posts.FirstOrDefaultAsync(x => x.Id == postId);
+        var post = await dbContext.Posts.FirstOrDefaultAsync(x => x.Id == postId);
 
         if (post is null)
         {
@@ -179,8 +173,8 @@ public class PostsController : ControllerBase
             return BadRequest("Post can't relate to itself!");
         }
         
-        var added = await _dbContext.Posts.Where(x => data.Add.Contains(x.Id)).ToListAsync();
-        var removed = await _dbContext.Posts.Where(x => data.Remove.Contains(x.Id)).ToListAsync();
+        var added = await dbContext.Posts.Where(x => data.Add.Contains(x.Id)).ToListAsync();
+        var removed = await dbContext.Posts.Where(x => data.Remove.Contains(x.Id)).ToListAsync();
 
         foreach (var add in added)
         {
@@ -198,8 +192,8 @@ public class PostsController : ControllerBase
             }
         }
         
-        _dbContext.Posts.Update(post);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Posts.Update(post);
+        await dbContext.SaveChangesAsync();
         
         return Ok("Update related posts was successful!");
     }
@@ -213,14 +207,14 @@ public class PostsController : ControllerBase
             return BadRequest("Something is wrong with the provided data!");
         }
         
-        var post = await _dbContext.Posts.FirstOrDefaultAsync(x => x.Id == postId);
+        var post = await dbContext.Posts.FirstOrDefaultAsync(x => x.Id == postId);
 
         if (post is null)
         {
             return BadRequest($"Post with id {postId} does not exist!");
         }
         
-        List<ContentPart> removed = await _dbContext.ContentParts.Where(x => data.Remove.Contains(x.Id)).ToListAsync();
+        List<ContentPart> removed = await dbContext.ContentParts.Where(x => data.Remove.Contains(x.Id)).ToListAsync();
         
         foreach (ContentPart remove in removed)
         {
@@ -233,8 +227,8 @@ public class PostsController : ControllerBase
         // todo: linked list to preserve order of content parts 
         // todo: allow add and edit of content parts 
         
-        _dbContext.Posts.Update(post);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Posts.Update(post);
+        await dbContext.SaveChangesAsync();
         
         return Ok("Update post parts was successful!");
     }
@@ -242,15 +236,15 @@ public class PostsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePostAsync([FromRoute] int id)
     {
-        Post? post = await _dbContext.Posts.FirstOrDefaultAsync(x => x.Id == id);
+        Post? post = await dbContext.Posts.FirstOrDefaultAsync(x => x.Id == id);
         
         if (post is null)
         {
             return BadRequest($"Post with id {id} does not exist!");
         }
 
-        _dbContext.Posts.Remove(post);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Posts.Remove(post);
+        await dbContext.SaveChangesAsync();
         
         return Ok();
     }

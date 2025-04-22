@@ -1,5 +1,6 @@
 using Backend.Data;
 using Backend.Models;
+using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,48 +8,33 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Pages;
 
-public sealed class PostViewModel
+public sealed class PostViewModel(
+    int id,
+    string title,
+    string summary,
+    List<string> tags,
+    DateTime createdAt,
+    List<ContentPart> parts,
+    List<PostPreviewModel> relatedPosts)
 {
-    public int Id { get; }
+    public int Id { get; } = id;
 
-    public string Title { get; }
-    
-    public string Summary { get; }
-    
-    public List<string> Tags { get; }
+    public string Title { get; } = title;
 
-    public DateTime CreatedAt { get; }
-    
-    public List<ContentPart> Parts { get; }
-    
-    public List<PostPreviewModel> RelatedPosts { get; }
+    public string Summary { get; } = summary;
 
-    public PostViewModel(
-        int id,
-        string title,
-        string summary,
-        List<string> tags,
-        DateTime createdAt,
-        List<ContentPart> parts,
-        List<PostPreviewModel> relatedPosts)
-    {
-        Id = id;
-        Title = title;
-        Summary = summary;
-        Tags = tags;
-        CreatedAt = createdAt;
-        Parts = parts;
-        RelatedPosts = relatedPosts;
-    }
+    public List<string> Tags { get; } = tags;
+
+    public DateTime CreatedAt { get; } = createdAt;
+
+    public List<ContentPart> Parts { get; } = parts;
+
+    public List<PostPreviewModel> RelatedPosts { get; } = relatedPosts;
 }
 
 [AllowAnonymous]
-public class PostModel : PageModel
+public class PostModel(ApplicationDbContext dbContext, VisitService visitService) : PageModel
 {
-    private readonly ApplicationDbContext _dbContext;
-    
-    public PostModel(ApplicationDbContext dbContext) => _dbContext = dbContext;
-
     [BindProperty] public PostViewModel? Post { get; private set; }
     
     public async Task<IActionResult> OnGetAsync(string? id)
@@ -58,12 +44,14 @@ public class PostModel : PageModel
             return NotFound();
         }
         
-        Post? post = await _dbContext.Posts
+        Post? post = await dbContext.Posts
             .Include(post => post.Parts)
             .Include(post => post.Tags)
             .Include(post => post.Relations)
             .ThenInclude(post => post.Tags)
             .FirstOrDefaultAsync(x => x.UrlIdentifier == id);
+
+        await visitService.AddSiteAsync(this.HttpContext, post);
         
         if (post is null || !post.IsPublished)
         {

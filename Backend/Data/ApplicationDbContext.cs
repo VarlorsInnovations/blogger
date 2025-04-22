@@ -12,6 +12,8 @@ public sealed class ApplicationDbContext : IdentityDbContext<User, Role, int>
 
     public DbSet<PostTag> PostTags { get; set; }
     
+    public DbSet<Visits> Visits { get; set; }
+    
     public DbSet<ContentPart> ContentParts { get; set; }
     
     public DbSet<PostRelation> PostRelations { get; set; }

@@ -1,33 +1,28 @@
 using Backend.Data;
-using Backend.Models;
+using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Pages;
 
-public class IndexModel : PageModel
+public class IndexModel(
+    ApplicationDbContext dbContext,
+    ILogger<IndexModel> logger,
+    VisitService visitService)
+    : PageModel
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly ILogger<IndexModel> _logger;
+    private readonly ILogger<IndexModel> _logger = logger;
 
     [BindProperty] public List<PostPreviewModel> RecentPosts { get; private set; }
 
     [BindProperty] public List<PostPreviewModel> MostViewedPosts { get; private set; }
 
-    [BindProperty] public List<User> Users { get; private set; }
-
-    public IndexModel(
-        ApplicationDbContext dbContext,
-        ILogger<IndexModel> logger)
-    {
-        _dbContext = dbContext;
-        _logger = logger;
-    }
-    
     public async Task<IActionResult> OnGetAsync()
     {
-        RecentPosts = await _dbContext.Posts
+        await visitService.AddSiteAsync(this.HttpContext);
+
+        RecentPosts = await dbContext.Posts
             .Where(x => x.IsPublished)
             .Where(x => x.CreatedAt >= DateTime.UtcNow.AddDays(-10))
             .Select(x => new PostPreviewModel(
@@ -37,17 +32,30 @@ public class IndexModel : PageModel
                 x.UrlIdentifier,
                 x.Tags.Select(y => y.Content).ToList(), x.CreatedAt))
             .ToListAsync();
+
+
+        var grouping = await dbContext.Visits
+            .Include(x => x.Post)
+                .ThenInclude(x => x!.Tags)
+            .Where(x => x.Post != null)
+            .Where(x => x.Post!.IsPublished)
+            .GroupBy(x => x.Post)
+            .Select(x => new { Post = x.Key, Count = x.Count() })
+            .OrderBy(x => x.Count)
+            .Take(3)
+            .Select(x => x.Post)
+            .ToListAsync();
+
+        MostViewedPosts = grouping.Select(x => 
+            new PostPreviewModel(
+                x.Id,
+                x.Title,
+                x.Summary,
+                x.UrlIdentifier,
+                x.Tags?.Select(y => y.Content).ToList() ?? [],
+                x.CreatedAt))
+            .ToList();
         
-        Users = await _dbContext.Users.ToListAsync();
-        // todo: impl. most viewed posts (rating system)
-        
-        MostViewedPosts =
-        [
-            new PostPreviewModel(1, "My experience with depressions", "my summary", "depression-experience", ["depression"], DateTime.UtcNow),
-            new PostPreviewModel(2, "Tips for parents", "my summary2", "tips-and-tricks", ["info"], DateTime.UtcNow),
-        ];
-        
-        await Task.CompletedTask;
         return Page();
     }
 }
