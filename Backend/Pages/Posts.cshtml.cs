@@ -50,7 +50,9 @@ public class PostsModel : PageModel
     
     public async Task<IActionResult> OnGetAsync()
     {
-        Items = await _dbContext.Posts.Select(
+        Items = await _dbContext.Posts
+            .Where(x => x.IsPublished)
+            .Select(
                 x => new PostPreviewModel(
                     x.Id, 
                     x.Title,

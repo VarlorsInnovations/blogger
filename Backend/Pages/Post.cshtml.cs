@@ -65,11 +65,11 @@ public class PostModel : PageModel
             .ThenInclude(post => post.Tags)
             .FirstOrDefaultAsync(x => x.UrlIdentifier == id);
         
-        if (post is null)
+        if (post is null || !post.IsPublished)
         {
             return Page();
         }
-
+        
         List<PostPreviewModel> relations = post.Relations.Select(x => new PostPreviewModel(
             x.Id,
             x.Title,

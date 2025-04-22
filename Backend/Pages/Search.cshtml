@@ -13,13 +13,13 @@
 <div class="search-results">
     @if (Model.SearchResult is not null)
     {
-        @foreach (var post in Model.SearchResult)
+        @foreach (PostPreviewModel post in Model.SearchResult)
         {
             <section class="post-overview">
                 <h2><a asp-page="./Post" asp-route-id="@post.UrlIdentifier">@post.Title</a></h2>
                 <h4>Published at @post.CreatedAt.ToString("MM/dd/yyyy")</h4>
                 <section class="tag-section">
-                    @foreach (var tag in post.Tags)
+                    @foreach (string tag in post.Tags)
                     {
                         <div class="tag">@tag</div>
                     }

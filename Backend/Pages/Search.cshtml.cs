@@ -25,6 +25,7 @@ public class SearchModel : PageModel
         }
 
         SearchResult = await _dbContext.Posts
+            .Where(x => x.IsPublished)
             .Where(x => 
                 x.Title.ToLower().Contains(SearchTerm.ToLower()) ||  
                 x.Tags.Select(t => t.Content.ToLower()).Contains(SearchTerm.ToLower()))

@@ -28,6 +28,7 @@ public class IndexModel : PageModel
     public async Task<IActionResult> OnGetAsync()
     {
         RecentPosts = await _dbContext.Posts
+            .Where(x => x.IsPublished)
             .Where(x => x.CreatedAt >= DateTime.UtcNow.AddDays(-10))
             .Select(x => new PostPreviewModel(
                 x.Id, 
