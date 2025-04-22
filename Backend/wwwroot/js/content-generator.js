@@ -121,7 +121,8 @@ class ContentCreation extends HTMLElement {
         data.append("file", this.guiContent.imageSelection.files[0]);
         const response = await fetch("/api/PostPart/upload", {
             method: "POST",
-            body: data
+            body: data,
+            headers: { "Content-Type": "application/json" },
         })
         
         const json = await response.json();

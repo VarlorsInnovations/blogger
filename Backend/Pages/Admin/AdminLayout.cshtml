@@ -1,0 +1,18 @@
+@{
+    Layout = "Shared/_Layout";
+}
+
+<aside>
+    <h1>Admin panel:</h1>
+    <ul>
+        <li>
+            <a href="/admin/overview">Posts</a>
+        </li>
+        <li>
+            <a href="/admin/tags">Tags</a>
+        </li>
+    </ul>
+</aside>
+<div class="admin-panel">
+    @RenderBody()
+</div>

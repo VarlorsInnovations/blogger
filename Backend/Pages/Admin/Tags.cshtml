@@ -1,0 +1,33 @@
+@page
+@model TagsModel
+@{
+    Layout = "AdminLayout";
+    ViewData["Title"] = "Tags";
+    ViewData["Description"] = "Work with the available tags";
+}
+
+<div>
+    <h1>Tags:</h1>
+    <section>
+        <a href="/admin/create-tag">Create tag</a>
+    </section>
+    <section>
+        <h2>Tags: </h2>
+        @foreach (TagsTransferObject tag in Model.Tags)
+        {
+            <section id="@tag.Id">
+                <h3><input type="checkbox"/> @tag.Content</h3>
+                <button type="button" onclick="deleteTagAsync(@tag.Id)">Delete</button>
+            </section>
+        }
+    </section>
+    <script>
+        async function deleteTagAsync(id) {
+            await fetch(`/api/tag/${id}`, {
+                method: "DELETE"
+            })
+            
+            location.reload();
+        }
+    </script>
+</div>

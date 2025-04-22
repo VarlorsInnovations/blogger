@@ -1,12 +1,14 @@
 @page "/admin/overview"
 @model PostOverviewModel
 @{
+    
     ViewData["Title"] = $"Overview";
     ViewData["Description"] = $"An overview of all the available posts";
+    Layout = "AdminLayout";
 }
 
 <div class="post-list">
-    <h1>Overview:</h1>
+    <h1>Posts:</h1>
     <section class="overview-bar">
         <a href="/admin/create-post" class="link-button">Create post</a>
     </section>
