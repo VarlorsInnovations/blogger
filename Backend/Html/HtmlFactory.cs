@@ -20,7 +20,11 @@ public static class HtmlFactory
             case ContentPartType.Heading4:
                 return GenerateHeading4(part.Content);
             case ContentPartType.Image:
-                return GenerateImage(part.Content);
+                if (string.IsNullOrWhiteSpace(part.Link))
+                {
+                    throw new ArgumentException("Link needs to be a url set!");
+                }
+                return GenerateImage(part.Link);
             case ContentPartType.Link:
                 if (string.IsNullOrWhiteSpace(part.Link))
                 {
@@ -28,10 +32,13 @@ public static class HtmlFactory
                 }
                 return GenerateLink(part.Link, part.Content);
             case ContentPartType.Video:
-                return GenerateVideo(part.Content);
+                if (string.IsNullOrWhiteSpace(part.Link))
+                {
+                    throw new ArgumentException("Link needs to be a url set!");
+                }
+                return GenerateVideo(part.Link);
             default:
                 throw new NotSupportedException();
-                break;
         }
     }
 

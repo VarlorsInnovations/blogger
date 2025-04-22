@@ -36,6 +36,4 @@ public class EditPostModel : PageModel
 public sealed class EditPostObject
 {
     public int Id { get; set; }
-    
-    
 }

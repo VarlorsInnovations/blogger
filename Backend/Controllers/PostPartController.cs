@@ -41,11 +41,17 @@ public class PostPartController : ControllerBase
             Type = x.Type,
             Link = x.Link
         });
+
+        List<int> ids = [];
+        foreach (ContentPart part in parts)
+        {
+            var result = await _dbContext.ContentParts.AddAsync(part);
+            ids.Add(result.Entity.Id);
+        }
         
-        await _dbContext.ContentParts.AddRangeAsync(parts);
         await _dbContext.SaveChangesAsync();
 
-        return Ok("Part creation was successful!");
+        return Ok(ids);
     }
 
     [HttpPost("upload")]
@@ -69,7 +75,7 @@ public class PostPartController : ControllerBase
             return BadRequest("File type is not allowed!");
         }
 
-        string contentRoot = _environment.ContentRootPath;
+        string contentRoot = _environment.WebRootPath;
         var path = Path.Combine(contentRoot, "uploads");
 
         if (!Directory.Exists(path))

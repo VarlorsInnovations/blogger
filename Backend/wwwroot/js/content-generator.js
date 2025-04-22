@@ -1,56 +1,139 @@
 
-const container = document.getElementById("content-creation-container");
 const createPostSpace = document.getElementById("post-space");
 const createElementBtn = document.getElementById("create-element-button");
 const button = document.getElementById("create-post-button");
 
-const template = `
-<button class="remove-button" type="button">Remove</button>
-<select class="part-type-selection">
+class ContentCreation extends HTMLElement {
+    
+    static template1 =
+        `
+            <button class="remove-button" type="button">Remove</button>
+            <select class="part-type-selection">
+                
+            </select><br>
+            <textarea  class="content-input" placeholder="Content">
+
+            </textarea>
+            <input type="text" class="link-input" disabled placeholder="link"/>
+        `
+
+    static template2 =
+        `
+            <button class="remove-button" type="button">Remove</button>
+            <select class="part-type-selection">
+                
+            </select><br>
+            <input type="file" class="content-input" placeholder="Content" alt="" />
+            <button type="button" id="upload-button">Upload</button>
             
-</select><br>
-<textarea  class="content-input" placeholder="Content">
+            <input type="text" class="link-input" disabled placeholder="link"/>
+        `
 
-</textarea>
-<input type="text" id="link-input" disabled placeholder="link"/>
-`
 
-const partTypes = [
-    "Heading1",
-    "Heading2",
-    "Heading3",
-    "Heading4",
-    "Paragraph",
-    "Image",
-    "Video",
-    "Link"
-] 
-
-async function createElement() {
-    const element = document.createElement("div");
-    element.classList.add("part-wrapper");
-    element.style.border = "1px solid black";
+    static partTypes = [
+        "Heading1",
+        "Heading2",
+        "Heading3",
+        "Heading4",
+        "Paragraph",
+        "Image",
+        "Video",
+        "Link"
+    ]
     
-    const parsedDocument = new DOMParser().parseFromString(template, "text/html");
-    element.innerHTML = parsedDocument.body.innerHTML;
-    
-    const partTypeSelection = element.querySelector("select");
-    const removeButton = element.querySelector(".remove-button");
-    
-    for (const part of partTypes) {
-        const option = document.createElement("option");
-        option.innerText = part;
-        option.value = part;
-        partTypeSelection.appendChild(option);
+    constructor() {
+        super();
     }
     
-    removeButton.addEventListener(
-        "click", 
-        () => {
-            element.parentElement.removeChild(element);
-        });
+    async connectedCallback() {
+        this.transformIntoNormal("Heading1");
+    }
     
-    createElementBtn.insertAdjacentElement("beforebegin", element);
+    transformIntoNormal(value) {
+        const template = new DOMParser().parseFromString(ContentCreation.template1, "text/html");
+        this.innerHTML = template.body.innerHTML;
+
+        this.guiContent = {
+            partTypeSelect: this.querySelector(".part-type-selection"),
+            removeButton: this.querySelector(".remove-button"),
+        }
+        
+        this.#initSelection(value);
+        
+        this.guiContent.removeButton.addEventListener("click",
+            () => this.parentElement.removeChild(this));
+
+        this.guiContent.partTypeSelect.addEventListener("change", ()=> {
+            const current = this.guiContent.partTypeSelect.value;
+            if (current === "Image") {
+                this.transformIntoImage();
+            }
+            else {
+                this.transformIntoNormal(current)
+            }
+        });
+    }
+    
+    #initSelection(value) {
+        for (const part of ContentCreation.partTypes) {
+            const option = document.createElement("option");
+            option.innerText = part;
+            option.value = part;
+            this.guiContent.partTypeSelect.appendChild(option);
+        }
+        
+        this.guiContent.partTypeSelect.value = value;
+    }
+    
+    transformIntoImage() {
+        this.innerHTML = "";
+        const template = new DOMParser().parseFromString(ContentCreation.template2, "text/html");
+        this.innerHTML = template.body.innerHTML;
+
+        this.guiContent = {
+            partTypeSelect: this.querySelector(".part-type-selection"),
+            removeButton: this.querySelector(".remove-button"),
+            imageSelection: this.querySelector(".content-input"),
+            uploadButton: this.querySelector("#upload-button"),
+            linkInput: this.querySelector(".link-input"),
+        }
+        
+        this.#initSelection("Image");
+
+        this.guiContent.removeButton.addEventListener("click",
+            () => this.parentElement.removeChild(this));
+        
+        this.guiContent.partTypeSelect.addEventListener("change", ()=> {
+            const current = this.guiContent.partTypeSelect.value;
+            if (current === "Image") {
+                this.transformIntoImage();
+            }
+            else {
+                this.transformIntoNormal(current)
+            }
+        });
+        
+        this.guiContent.uploadButton.addEventListener("click", this.uploadAsync.bind(this));
+    }
+
+    async uploadAsync() {
+        const data = new FormData();
+        data.append("file", this.guiContent.imageSelection.files[0]);
+        const response = await fetch("/api/PostPart/upload", {
+            method: "POST",
+            body: data
+        })
+        
+        const json = await response.json();
+        this.guiContent.linkInput.value = json["fileName"];
+    }
+}
+
+customElements.define("content-creation-element", ContentCreation);
+
+async function createElement() {
+    const creationElement = new ContentCreation();
+    createElementBtn.insertAdjacentElement("beforebegin", creationElement);
 }
 
 async function createPostAsync() {
@@ -63,13 +146,13 @@ async function createPostAsync() {
         }
     }
 
-    const partWrappers = createPostSpace.querySelectorAll(".part-wrapper");
+    const partWrappers = createPostSpace.querySelectorAll("content-creation-element");
     const parts = [];
 
     for (const part of partWrappers) {
         const partTypeSelection = part.querySelector(".part-type-selection");
         const content = part.querySelector(".content-input");
-        const link = part.querySelector("#link-input");
+        const link = part.querySelector(".link-input");
 
         parts.push(
             {
@@ -79,6 +162,20 @@ async function createPostAsync() {
             }
         )
     }
+    
+    const partResponse = await fetch("/api/PostPart/", {
+        method: "POST",
+        body: JSON.stringify( {parts: parts}),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    })
+    
+    if (!partResponse.ok) {
+        throw new Error("Unable to create post parts");
+    }
+    
+    const partJson = await partResponse.json();
     
     const relatedPostsCheckbox = createPostSpace.querySelectorAll(".related-post-select")
     const relatedPosts = [];
@@ -95,7 +192,7 @@ async function createPostAsync() {
         "summary": createPostSpace.querySelector("#post-summary").value,
         "isPublished": createPostSpace.querySelector("#is-published-checkbox").checked,
         "tags": tags,
-        "content": parts,
+        "content": partJson,
         "relatedPosts": relatedPosts
     }
     
