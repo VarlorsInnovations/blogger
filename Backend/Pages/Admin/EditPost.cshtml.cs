@@ -14,6 +14,8 @@ public class EditPostModel : PageModel
     public EditPostObject? Post { get; private set; }
     
     public List<PostPreviewModel> RecentPosts { get; private set; }
+    
+    public List<PostPreviewModel> PostRelations { get; private set; }
 
     public EditPostModel(ILogger<EditPostModel> logger, ApplicationDbContext dbContext)
     {
@@ -24,20 +26,33 @@ public class EditPostModel : PageModel
     public async Task<IActionResult> OnGetAsync(int? id)
     {
         Post? post = await _dbContext.Posts.Include(post => post.Tags).Include(post => post.Parts).FirstOrDefaultAsync(x => x.Id == id);
-        RecentPosts = await _dbContext.Posts
-            .Where(x => x.IsPublished)
-            .Select(x => new PostPreviewModel(
-            x.Id, 
-            x.Title, 
-            x.Summary, 
-            x.UrlIdentifier, 
-            x.Tags.Select(t => t.Content).ToList(),
-            x.CreatedAt)).ToListAsync();
         
         if (post is null)
         {
+            RecentPosts = await _dbContext.Posts
+                .Where(x => x.IsPublished)
+                .Select(x => new PostPreviewModel(
+                    x.Id, 
+                    x.Title, 
+                    x.Summary, 
+                    x.UrlIdentifier, 
+                    x.Tags.Select(t => t.Content).ToList(),
+                    x.CreatedAt))
+                .ToListAsync();
+            
             return Page();
         }
+        
+        PostRelations = await _dbContext.Posts
+            .Where(x => x.IsPublished)
+            .Where(x => x.Id != post.Id)
+            .Select(x => new PostPreviewModel(
+                x.Id,
+                x.Title,
+                x.Summary,
+                x.UrlIdentifier,
+                x.Tags.Select(t => t.Content).ToList(),
+                x.CreatedAt)).ToListAsync();
 
         Post = new EditPostObject(
             post.Id,

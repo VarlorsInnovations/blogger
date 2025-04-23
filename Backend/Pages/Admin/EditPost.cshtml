@@ -1,8 +1,9 @@
 @page "/admin/edit-post/{id}"
+@using Backend.Models
 @model EditPostModel
 @{
     ViewData["Title"] = "Edit";
-    ViewData["Description"] = "Edit the specified post";
+    ViewData["Description"] = "Edit a specified post";
     Layout = "AdminLayout";
 }
 
@@ -16,7 +17,7 @@
         {
             <section class="post-overview">
                 <h2><a asp-page="./Post" asp-route-id="@post.UrlIdentifier">@post.Title</a></h2>
-                <h4>Published at @post.CreatedAt.ToString("MM/dd/yyyy")</h4>
+                <h4>Published at @post.CreatedAt.ToString("dd/MM/yyyy")</h4>
                 <section class="tag-section">
                     @foreach (var tag in post.Tags)
                     {
@@ -48,10 +49,42 @@ else
             
         </section>
         <section class="edit-post-relations">
+            @foreach (PostPreviewModel relation in Model.PostRelations)
+            {
+                <div>
+                    <h3><input type="checkbox" checked="@Model.Post.Relations.Select(x => x.Id).Contains(relation.Id)" id="@relation.Id" class="related-post-select"/> @relation.Title</h3>
+                    <p>
+                        @relation.Summary
+                    </p>
+                </div>
+            }
             
+            <button type="button" id="save-relation-button" onclick="updatePostRelations(@Model.Post.Id)">Save</button>
         </section>
         <section class="edit-post-parts">
-            
+            @foreach (ContentPart part in Model.Post.Parts)
+            {
+                if (part.Type == ContentPartType.Image)
+                {
+                    continue;
+                }
+                
+                <div id="part-@part.Id">
+                    <textarea  class="content-input" placeholder="Content">
+                        @part.Content
+                    </textarea>
+                    @if (part.Link is not null)
+                    {
+                        <input type="text" class="link-input" value="@part.Link" placeholder="link"/>
+                    }
+                    else
+                    {
+                        <input type="text" class="link-input" disabled placeholder="link"/>
+                    }
+                    
+                    <button type="button" onclick="updatePartAsync(@part.Id, @part.Type)">Save</button>
+                </div>
+            }
         </section>
         <script>
             async function updatePostInfoAsync(id) {
@@ -71,6 +104,53 @@ else
                     method: "POST",
                     body: JSON.stringify(payload),
                     headers: { "Content-Type": "application/json" }
+                })
+            }
+            
+            async function updatePostRelations(id) {
+                const checkboxes = document.querySelectorAll(".related-post-select");
+                const remove = [];
+                const add = [];
+                for (const check of checkboxes) {
+                    if (check.checked) {
+                        add.push(Number(check.id))
+                    }
+                    else {
+                        remove.push(Number(check.id))
+                    }
+                }
+                
+                const payload = {
+                    add: add, 
+                    remove: remove
+                }
+                
+                await fetch(`/api/Posts/${id}/related`, {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                    headers: { 
+                        "Content-Type": "application/json"
+                    }
+                })
+            }
+            
+            async function updatePartAsync(id, type) {
+                const element = document.getElementById(`part-${id}`)
+                const contentElement = element.querySelector("#content-input")
+                const linkElement = element.querySelector("#link-input")
+                
+                const payload = {
+                    type: type, 
+                    link: linkElement.value,
+                    content: contentElement.value
+                }
+                
+                await fetch(`/api/PostPart/${id}`, {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
                 })
             }
         </script>

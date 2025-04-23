@@ -14,7 +14,7 @@ class ContentCreation extends HTMLElement {
             <textarea  class="content-input" placeholder="Content">
 
             </textarea>
-            <input type="text" class="link-input" disabled placeholder="link"/>
+            <input type="text" class="link-input" placeholder="link"/>
         `
 
     static template2 =
