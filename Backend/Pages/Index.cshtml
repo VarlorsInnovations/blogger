@@ -36,10 +36,11 @@
     </div>
     <div>
         <h2>Most viewed: </h2>
-        @foreach (PostPreviewModel mostViewed in @Model.MostViewedPosts)
+        @foreach (MostViewedPostsModel mostViewed in @Model.MostViewedPosts)
         {
             <section class="post-overview">
                 <h2><a asp-page="./Post" asp-route-id="@mostViewed.UrlIdentifier">@mostViewed.Title</a></h2>
+                <p>Views: @mostViewed.ViewCount</p>
                 <h4>Published at @mostViewed.CreatedAt.ToString("MM/dd/yyyy")</h4>
                 <section class="tag-section">
                     @foreach (var tag in mostViewed.Tags)

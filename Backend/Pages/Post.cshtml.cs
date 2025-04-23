@@ -37,6 +37,8 @@ public class PostModel(ApplicationDbContext dbContext, VisitService visitService
 {
     [BindProperty] public PostViewModel? Post { get; private set; }
     
+    [BindProperty] public List<PostPreviewModel> RecentPosts { get; private set; } 
+    
     public async Task<IActionResult> OnGetAsync(string? id)
     {
         if (id is null)
@@ -49,8 +51,19 @@ public class PostModel(ApplicationDbContext dbContext, VisitService visitService
             .Include(post => post.Tags)
             .Include(post => post.Relations)
             .ThenInclude(post => post.Tags)
+            .Where(x => x.IsPublished)
             .FirstOrDefaultAsync(x => x.UrlIdentifier == id);
-
+        
+        RecentPosts = await dbContext.Posts
+            .Where(x => x.IsPublished)
+            .Select(x => new PostPreviewModel(
+                x.Id, 
+                x.Title, 
+                x.Summary, 
+                x.UrlIdentifier, 
+                x.Tags.Select(t => t.Content).ToList(),
+                x.CreatedAt)).ToListAsync();
+        
         await visitService.AddSiteAsync(this.HttpContext, post);
         
         if (post is null || !post.IsPublished)

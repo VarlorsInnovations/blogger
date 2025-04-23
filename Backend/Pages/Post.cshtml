@@ -11,8 +11,23 @@
     <h1>404 - Post not found</h1>
     <p>
         You have not found what you where looking for.<br />
-        Maybe my most viewed post could interest you.
-        <!-- todo: implement most recent or most viewed posts -->
+        Maybe one of the recent posts interest you.
+        @foreach (var post in Model.RecentPosts)
+        {
+            <section class="post-overview">
+                <h2><a asp-page="./Post" asp-route-id="@post.UrlIdentifier">@post.Title</a></h2>
+                <h4>Published at @post.CreatedAt.ToString("MM/dd/yyyy")</h4>
+                <section class="tag-section">
+                    @foreach (var tag in post.Tags)
+                    {
+                        <div class="tag">@tag</div>
+                    }
+                </section>
+                <p class="post-summary">
+                    @post.Summary
+                </p>
+            </section>
+        }
     </p>
 }
 else 

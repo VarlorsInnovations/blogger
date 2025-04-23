@@ -16,7 +16,7 @@ public class IndexModel(
 
     [BindProperty] public List<PostPreviewModel> RecentPosts { get; private set; }
 
-    [BindProperty] public List<PostPreviewModel> MostViewedPosts { get; private set; }
+    [BindProperty] public List<MostViewedPostsModel> MostViewedPosts { get; private set; }
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -43,19 +43,31 @@ public class IndexModel(
             .Select(x => new { Post = x.Key, Count = x.Count() })
             .OrderBy(x => x.Count)
             .Take(3)
-            .Select(x => x.Post)
             .ToListAsync();
 
         MostViewedPosts = grouping.Select(x => 
-            new PostPreviewModel(
-                x.Id,
-                x.Title,
-                x.Summary,
-                x.UrlIdentifier,
-                x.Tags?.Select(y => y.Content).ToList() ?? [],
-                x.CreatedAt))
+            new MostViewedPostsModel(
+                x.Post.Id,
+                x.Post.Title,
+                x.Post.Summary,
+                x.Post.UrlIdentifier,
+                x.Post.Tags?.Select(y => y.Content).ToList() ?? [],
+                x.Post.CreatedAt,
+                x.Count))
             .ToList();
         
         return Page();
     }
+}
+
+public sealed class MostViewedPostsModel(
+    int id, 
+    string title, 
+    string summary, 
+    string urlIdentifier, 
+    List<string> tags, 
+    DateTime createdAt,
+    int viewCount) : PostPreviewModel(id, title, summary, urlIdentifier, tags, createdAt)
+{
+    public int ViewCount { get; } = viewCount;
 }

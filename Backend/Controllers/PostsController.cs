@@ -79,10 +79,6 @@ public class PostsController(ILogger<PostsController> logger, ApplicationDbConte
         {
             return BadRequest("Something is wrong with the provided data!");
         }
-
-        // todo: remove and/or add content parts 
-        // todo: remove and/or add tags 
-        // todo: remove and/or add related posts 
         
         Post? post = await dbContext.Posts.Include(
             post => post.Parts)

@@ -6,18 +6,73 @@
     Layout = "AdminLayout";
 }
 
-<div>
-    <h1>Edit post:</h1>
-    <section class="edit-post-main">
-        <!-- todo: edit title, etc. -->
-    </section>
-    <section class="edit-post-tags">
-        
-    </section>
-    <section class="edit-post-relations">
-        
-    </section>
-    <section class="edit-post-parts">
-        
-    </section>
-</div>
+@if (Model.Post is null)
+{
+    <h1>404 - Post not found</h1>
+    <p>
+        You have not found what you where looking for.<br />
+        Maybe one of the recent posts interest you.
+        @foreach (var post in Model.RecentPosts)
+        {
+            <section class="post-overview">
+                <h2><a asp-page="./Post" asp-route-id="@post.UrlIdentifier">@post.Title</a></h2>
+                <h4>Published at @post.CreatedAt.ToString("MM/dd/yyyy")</h4>
+                <section class="tag-section">
+                    @foreach (var tag in post.Tags)
+                    {
+                        <div class="tag">@tag</div>
+                    }
+                </section>
+                <p class="post-summary">
+                    @post.Summary
+                </p>
+            </section>
+        }
+    </p>
+}
+else
+{
+    <div>
+        <h1>Edit post:</h1>
+        <section class="edit-post-main">
+            <input type="text" id="post-title" value="@Model.Post.Title" placeholder="Title"/><br/>
+            <input type="text" id="post-identifier" value="@Model.Post.UrlIdentifier" placeholder="Url identifier"/><br/>
+            <textarea id="post-summary" value="@Model.Post.Summary" placeholder="Summary"></textarea><br/>
+            <label for="is-published-checkbox">Is published</label>
+            <input type="checkbox" id="is-published-checkbox" checked="@Model.Post.IsPublished"/>
+            
+            <button type="button" id="save-main-content" onclick="updatePostInfoAsync(@Model.Post.Id)">Save</button>
+        </section>
+        <section class="edit-post-tags">
+            <!-- todo: https://stackoverflow.com/questions/30190588/html-select-multiple-as-dropdown -->
+            
+        </section>
+        <section class="edit-post-relations">
+            
+        </section>
+        <section class="edit-post-parts">
+            
+        </section>
+        <script>
+            async function updatePostInfoAsync(id) {
+                const titleInput = document.querySelector("#post-title")
+                const idInput = document.querySelector("#post-identifier")
+                const summaryInput = document.querySelector("#post-summary")
+                const publishCheckbox = document.querySelector("#is-published-checkbox")
+                
+                const payload = {
+                    title: titleInput.value,
+                    urlIdentifier: idInput.value,
+                    summary: summaryInput.value,
+                    isPublished: publishCheckbox.value
+                }
+                
+                await fetch(`/api/Posts/${id}`, {
+                    method: "POST",
+                    body: JSON.stringify(payload),
+                    headers: { "Content-Type": "application/json" }
+                })
+            }
+        </script>
+    </div>
+}

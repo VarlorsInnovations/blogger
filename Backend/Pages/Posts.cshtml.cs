@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Pages;
 
-public sealed class PostPreviewModel(
+public class PostPreviewModel(
     int id,
     string title,
     string summary,
