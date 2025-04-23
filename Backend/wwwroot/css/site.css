@@ -2,6 +2,11 @@ html {
   font-size: 14px;
 }
 
+body {
+  font-family: 'Inter';
+  font-size: 22px;
+}
+
 @media (min-width: 768px) {
   html {
     font-size: 16px;
