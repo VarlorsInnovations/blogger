@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Html
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
@@ -9,6 +11,10 @@
 </head>
 <body>
 <header>
+    @if (ViewData["Banner"] is not null)
+    {
+        @(new HtmlString((string?)ViewData["Banner"] ?? ""));
+    }
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
         <div class="container">
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
