@@ -37,6 +37,8 @@ public static class HtmlFactory
                     throw new ArgumentException("Link needs to be a url set!");
                 }
                 return GenerateVideo(part.Link);
+            case ContentPartType.Code:
+                return GenerateCode(part.Content);
             default:
                 throw new NotSupportedException();
         }
@@ -57,4 +59,6 @@ public static class HtmlFactory
     private static HtmlString GenerateLink(string link, string content) => new($"<a href=\"{link}\" class=\"post-webmark\">{content}</a>");
     
     private static HtmlString GenerateVideo(string link) => new($"<video src=\"{link}\" class=\"post-video\"/>");
+    
+    private static HtmlString GenerateCode(string content) => new($"<code>{content}</code>");
 }

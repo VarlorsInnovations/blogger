@@ -28,8 +28,7 @@ class ContentCreation extends HTMLElement {
             
             <input type="text" class="link-input" disabled placeholder="link"/>
         `
-
-
+    
     static partTypes = [
         "Heading1",
         "Heading2",
@@ -38,7 +37,8 @@ class ContentCreation extends HTMLElement {
         "Paragraph",
         "Image",
         "Video",
-        "Link"
+        "Link",
+        "Code"
     ]
     
     constructor() {

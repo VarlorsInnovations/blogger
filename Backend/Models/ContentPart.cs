@@ -12,7 +12,8 @@ public enum ContentPartType
     Heading4,
     Image,
     Video,
-    Link
+    Link,
+    Code
 }
 
 [Table("content_parts")]
