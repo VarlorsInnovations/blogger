@@ -748,3 +748,319 @@ code {
     background-color: var(--gray-100);
   }
 }
+
+/* Multi-Select Element */
+
+/* Container für das Multi-Select */
+.multi-select {
+  position: relative;
+  width: 100%;
+  font-family: var(--font-primary);
+  margin-bottom: var(--space-md);
+}
+
+/* Haupt-Select Box */
+.multi-select-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 45px;
+  padding: var(--space-xs) var(--space-sm);
+  border: 2px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  background-color: white;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.multi-select-box:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+  outline: none;
+}
+
+/* Stil für ausgewählte Items */
+.selected-item {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--secondary);
+  color: var(--primary);
+  font-size: 0.85rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-sm);
+  margin-right: var(--space-xs);
+  margin-bottom: var(--space-xs);
+  transition: all var(--transition-fast);
+}
+
+.selected-item:hover {
+  background-color: color-mix(in srgb, var(--secondary) 90%, var(--primary));
+}
+
+/* Entfernen-Button für ausgewählte Items */
+.remove-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: var(--space-xs);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--primary);
+  font-weight: bold;
+  padding: 0;
+  line-height: 1;
+  transition: all var(--transition-fast);
+}
+
+.remove-item:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Input-Feld innerhalb des Multi-Select */
+.multi-select-input {
+  flex: 1;
+  min-width: 50px;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 1rem;
+  background-color: transparent;
+  color: var(--dark);
+}
+
+.multi-select-input::placeholder {
+  color: var(--gray-500);
+}
+
+/* Dropdown für verfügbare Optionen */
+.options-dropdown {
+  position: absolute;
+  width: 100%;
+  max-height: 250px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-xs);
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all var(--transition-normal);
+}
+
+.options-dropdown.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Einzelne Option im Dropdown */
+.option-item {
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+  display: flex;
+  align-items: center;
+}
+
+.option-item:hover {
+  background-color: var(--gray-100);
+}
+
+/* Ausgewählte Option im Dropdown */
+.option-item.selected {
+  background-color: var(--secondary);
+  color: var(--primary);
+}
+
+/* Checkbox für ausgewählte Optionen */
+.option-checkbox {
+  margin-right: var(--space-sm);
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--gray-400);
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.option-item.selected .option-checkbox {
+  border-color: var(--primary);
+  background-color: var(--primary);
+  position: relative;
+}
+
+.option-item.selected .option-checkbox::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background-color: white;
+  border-radius: 1px;
+}
+
+/* Gruppenkopfzeile für Option-Gruppen */
+.option-group-header {
+  padding: var(--space-xs) var(--space-md);
+  font-weight: 600;
+  color: var(--gray-600);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: var(--gray-100);
+}
+
+/* Keine Ergebnisse Nachricht */
+.no-results {
+  padding: var(--space-md);
+  text-align: center;
+  color: var(--gray-600);
+  font-style: italic;
+}
+
+/* Leere Auswahlmeldung */
+.placeholder-text {
+  color: var(--gray-500);
+  font-size: 0.95rem;
+}
+
+/* Dropdown-Pfeil */
+.dropdown-arrow {
+  margin-left: auto;
+  transition: transform var(--transition-fast);
+}
+
+.multi-select-box:focus-within .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Badge für Anzahl ausgewählter Elemente */
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-xs);
+  border-radius: 10px;
+  background-color: var(--primary);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+/* Clear-All Button */
+.clear-all {
+  background: none;
+  border: none;
+  color: var(--gray-600);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: var(--space-xs);
+  margin-left: auto;
+  transition: all var(--transition-fast);
+}
+
+.clear-all:hover {
+  color: var(--danger);
+}
+
+/* Suchbox innerhalb des Dropdowns */
+.search-box {
+  position: sticky;
+  top: 0;
+  padding: var(--space-xs);
+  background-color: white;
+  border-bottom: 1px solid var(--gray-200);
+  z-index: 1;
+}
+
+.search-input-dropdown {
+  width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+/* Disabled-Zustand */
+.multi-select.disabled .multi-select-box {
+  background-color: var(--gray-100);
+  border-color: var(--gray-200);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.multi-select.disabled .selected-item {
+  opacity: 0.7;
+}
+
+.multi-select.disabled .remove-item,
+.multi-select.disabled .multi-select-input {
+  pointer-events: none;
+}
+
+/* Fehler-Zustand */
+.multi-select.error .multi-select-box {
+  border-color: var(--danger);
+}
+
+.multi-select.error .multi-select-box:focus-within {
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+}
+
+/* Hilfetexte und Fehlermeldungen */
+.help-text {
+  margin-top: var(--space-xs);
+  font-size: 0.85rem;
+  color: var(--gray-600);
+}
+
+.error-text {
+  margin-top: var(--space-xs);
+  font-size: 0.85rem;
+  color: var(--danger);
+}
+
+/* Tastatur-Navigation */
+.option-item:focus {
+  outline: none;
+  background-color: var(--gray-200);
+}
+
+/* Dark Mode Anpassungen */
+@media (prefers-color-scheme: dark) {
+  .multi-select-box,
+  .options-dropdown,
+  .search-box {
+    background-color: #1a2234;
+  }
+
+  .multi-select-input {
+    color: var(--gray-700);
+  }
+
+  .option-item:hover {
+    background-color: var(--gray-100);
+  }
+
+  .selected-item {
+    background-color: color-mix(in srgb, var(--secondary) 30%, var(--gray-100));
+    color: var(--gray-800);
+  }
+
+  .option-group-header {
+    background-color: #121826;
+    color: var(--gray-500);
+  }
+}
