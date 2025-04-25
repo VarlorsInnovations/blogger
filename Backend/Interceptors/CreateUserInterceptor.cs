@@ -37,6 +37,41 @@ public class CreateUserInterceptor
             {
                 throw new Exception(result.Errors.First().Description);
             }
+
+            List<Tag> tags =
+            [
+                new Tag() { Content = "Depressionen" },
+                new Tag() { Content = "Happiness" },
+                new Tag() { Content = "Medikamente" }
+            ];
+            
+            await dbContext.Tags.AddRangeAsync(tags);
+
+            List<Post> posts =
+            [
+                new Post()
+                {
+                    Tags = tags,
+                    Title = "First post",
+                    IsPublished = true,
+                    Summary = "This is my very first post",
+                    UrlIdentifier = "first-post",
+                    CreatedAt = DateTime.UtcNow,
+                    Parts = [new ContentPart() { Content = "Hello my friends", Type = ContentPartType.Paragraph }]
+                },
+                new Post()
+                {
+                    Tags = tags,
+                    Title = "Second post",
+                    IsPublished = true,
+                    Summary = "This is my very second post",
+                    UrlIdentifier = "second-post",
+                    CreatedAt = DateTime.UtcNow,
+                    Parts = [new ContentPart() { Content = "Nice to meeting you", Type = ContentPartType.Paragraph }]
+                }
+            ];
+            
+            await dbContext.Posts.AddRangeAsync(posts);
         }
         
         await _next(context);
