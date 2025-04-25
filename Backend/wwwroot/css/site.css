@@ -5,6 +5,7 @@
   /* Color Palette */
   --primary: #4a6fa5; /* Soft blue - calming but not too dark */
   --secondary: #e0e7ff; /* Light lavender for accents */
+  --elements: #344d4e;
   --dark: #2c3e50; /* Deep blue-gray for text */
   --light: #f8fafc; /* Off-white for backgrounds */
   --accent: #7d3c98; /* Purple for subtle highlights */
@@ -130,6 +131,13 @@ code {
   background-color: var(--gray-200);
   padding: 0.2em 0.4em;
   border-radius: var(--radius-sm);
+}
+
+.tag {
+  display: inline-block;
+  padding: 0.2em 0.4em;
+  background-color: var(--elements);
+  border-radius: var(--radius-lg);
 }
 
 /* ===== LAYOUT ===== */
@@ -667,6 +675,10 @@ code {
   padding: var(--space-lg) 0;
   border-top: 1px solid var(--gray-200);
   color: var(--gray-600);
+}
+
+.spacer {
+  margin-top: var(--space-md);
 }
 
 .footer-content {

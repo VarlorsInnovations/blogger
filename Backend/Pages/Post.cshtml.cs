@@ -56,6 +56,7 @@ public class PostModel(ApplicationDbContext dbContext, VisitService visitService
         
         RecentPosts = await dbContext.Posts
             .Where(x => x.IsPublished)
+            .Where(x => x.CreatedAt >= DateTime.UtcNow.AddDays(-10))
             .Select(x => new PostPreviewModel(
                 x.Id, 
                 x.Title, 

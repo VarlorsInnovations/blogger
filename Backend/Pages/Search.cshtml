@@ -5,29 +5,32 @@
     ViewData["Description"] = "Find articles about depressions";
 }
 
-<h1>Search</h1>
-<div class="search-container">
-    <input type="text" class="search-box search-input" asp-for="SearchTerm" />
-    <input type="submit" class="search-button" value="Search" />
+<div>
+    <h1>Search</h1>
+    <form class="search-container">
+        <input type="text" class="search-box search-input" asp-for="SearchTerm"/>
+        <input type="submit" class="search-button" value="Search" style="z-index:1;"/>
+    </form>
 </div>
 <div class="search-results">
     @if (Model.SearchResult is not null && Model.SearchResult.Count != 0)
     {
         @foreach (PostPreviewModel post in Model.SearchResult)
         {
-            <section class="post-overview">
+            <section class="related-post">
                 <h2><a asp-page="./Post" asp-route-id="@post.UrlIdentifier">@post.Title</a></h2>
                 <h4>Published at @post.CreatedAt.ToString("MM/dd/yyyy")</h4>
                 <section class="tag-section">
                     @foreach (string tag in post.Tags)
                     {
-                        <div class="tag">@tag</div>
+                        <div class="tag">#@tag</div>
                     }
                 </section>
                 <p class="post-summary">
                     @post.Summary
                 </p>
             </section>
+            <div class="spacer"></div>
         }
     }
     else
@@ -40,13 +43,14 @@
                 <section class="tag-section">
                     @foreach (string tag in post.Tags)
                     {
-                        <div class="tag">@tag</div>
+                        <div class="tag">#@tag</div>
                     }
                 </section>
                 <p class="post-summary">
                     @post.Summary
                 </p>
             </section>
+            <div class="spacer"></div>
         }
     }
 </div>

@@ -49,7 +49,7 @@ public class CreateUserInterceptor
 
             List<Post> posts =
             [
-                new Post()
+                new()
                 {
                     Tags = tags,
                     Title = "First post",
@@ -59,7 +59,7 @@ public class CreateUserInterceptor
                     CreatedAt = DateTime.UtcNow,
                     Parts = [new ContentPart() { Content = "Hello my friends", Type = ContentPartType.Paragraph }]
                 },
-                new Post()
+                new()
                 {
                     Tags = tags,
                     Title = "Second post",

@@ -36,7 +36,7 @@ else
     <section class="tag-section">
         @foreach (var tag in @Model.Post!.Tags)
         {
-            <div class="tag">@tag</div>
+            <div class="tag">#@tag</div>
         }
         <div class="post-content">
             @foreach (var part in @Model.Post!.Parts)
