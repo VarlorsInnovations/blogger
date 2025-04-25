@@ -6,16 +6,35 @@
 }
 
 <h1>Search</h1>
-<form>
-    <input type="text" class="search-box" asp-for="SearchTerm" />
-    <input type="submit" value="Search" />
-</form>
+<div class="search-container">
+    <input type="text" class="search-box search-input" asp-for="SearchTerm" />
+    <input type="submit" class="search-button" value="Search" />
+</div>
 <div class="search-results">
-    @if (Model.SearchResult is not null)
+    @if (Model.SearchResult is not null && Model.SearchResult.Count != 0)
     {
         @foreach (PostPreviewModel post in Model.SearchResult)
         {
             <section class="post-overview">
+                <h2><a asp-page="./Post" asp-route-id="@post.UrlIdentifier">@post.Title</a></h2>
+                <h4>Published at @post.CreatedAt.ToString("MM/dd/yyyy")</h4>
+                <section class="tag-section">
+                    @foreach (string tag in post.Tags)
+                    {
+                        <div class="tag">@tag</div>
+                    }
+                </section>
+                <p class="post-summary">
+                    @post.Summary
+                </p>
+            </section>
+        }
+    }
+    else
+    {
+        foreach (var post in Model.RecentPosts)
+        {
+            <section class="related-post">
                 <h2><a asp-page="./Post" asp-route-id="@post.UrlIdentifier">@post.Title</a></h2>
                 <h4>Published at @post.CreatedAt.ToString("MM/dd/yyyy")</h4>
                 <section class="tag-section">
