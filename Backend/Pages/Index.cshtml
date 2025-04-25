@@ -6,7 +6,7 @@
     ViewData["Banner"] = "<img src=\"https://placehold.co/600x400\" width=\"100%\" alt=\"banner image\" />";
 }
 
-<img src="https://placehold.co/600x400" width="100%" alt="banner image" />
+<img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.heilpraxisnet.de%2Fwp-content%2Fuploads%2F2017%2F06%2FDepressionen.jpg&f=1&nofb=1&ipt=0933d5f2249a5fc58b7e4d8caacd6dc66a9ff657f42a655efda4b855fb055259" width="100%" alt="banner image" />
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>
@@ -14,11 +14,11 @@
 
         Dich erwarten spannende Beiträge über meine eigene Krankheit, wie ich es wieder aus dem tiefen Loch heraus geschafft habe und den ein oder anderen Trick, um mit der Krankheit besser umgehen zu können. Des Weiteren soll es um Selbstentwicklung gehen und wie man dies mit der Krankheit in Einklang bringen kann.
     </p>
-    <div>
-        <h2>Recent posts:</h2>
+    <h2>Recent posts:</h2>
+    <div class="post-grid">
         @foreach (PostPreviewModel recent in @Model.RecentPosts)
         {
-            <section class="post-overview">
+            <section class="post-overview post-card">
                 <h2><a asp-page="./Post" asp-route-id="@recent.UrlIdentifier">@recent.Title</a></h2>
                 <h4>Published at @recent.CreatedAt.ToString("MM/dd/yyyy")</h4>
                 <section class="tag-section">
@@ -36,11 +36,11 @@
     <div class="target-audience">
         
     </div>
-    <div>
-        <h2>Most viewed: </h2>
+    <h2>Most viewed:</h2>
+    <div class="post-grid">
         @foreach (MostViewedPostsModel mostViewed in @Model.MostViewedPosts)
         {
-            <section class="post-overview">
+            <section class="post-overview post-card">
                 <h2><a asp-page="./Post" asp-route-id="@mostViewed.UrlIdentifier">@mostViewed.Title</a></h2>
                 <p>Views: @mostViewed.ViewCount</p>
                 <h4>Published at @mostViewed.CreatedAt.ToString("MM/dd/yyyy")</h4>

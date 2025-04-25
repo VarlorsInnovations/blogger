@@ -5,6 +5,7 @@
   /* Color Palette */
   --primary: #4a6fa5; /* Soft blue - calming but not too dark */
   --secondary: #e0e7ff; /* Light lavender for accents */
+  --third: #24252a;
   --elements: #344d4e;
   --dark: #2c3e50; /* Deep blue-gray for text */
   --light: #f8fafc; /* Off-white for backgrounds */
@@ -66,7 +67,11 @@ body {
   overflow-x: hidden;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 0 var(--space-md);
+  padding: 0 0;
+}
+
+main {
+  background-color: var(--third);  
 }
 
 .footer {
@@ -148,6 +153,11 @@ code {
   padding: var(--space-md);
 }
 
+.login-form {
+  width: 50%;
+  margin: 0 25%;
+}
+
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -199,6 +209,8 @@ code {
 /* ===== NAVIGATION ===== */
 .main-nav {
   margin: var(--space-md) 0;
+  background-color: var(--third);
+  margin-top: 0;
 }
 
 .nav-list {
@@ -361,6 +373,19 @@ code {
   max-width: 500px;
   margin: var(--space-lg) auto;
 }
+
+.input-element {
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  padding-right: 3rem;
+  border: 2px solid var(--gray-300);
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  background-color: white;
+  transition: all var(--transition-fast);
+}
+
 
 .search-input {
   width: 100%;
