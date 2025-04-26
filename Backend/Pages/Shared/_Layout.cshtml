@@ -15,168 +15,59 @@
 </head>
 <body>
 <canvas id="networkCanvas"></canvas>
-<header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 main-nav">
-        <div class="container">
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1 nav-list">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-page="/index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-page="/posts">Posts</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-page="/about">About</a>
-                    </li>
-                    <li>
-                        <a class="nav-link text-dark" asp-area="" asp-page="/search">Search</a>
-                    </li>
-                    @if (SignInManager.IsSignedIn(User))
-                    {
+<div class="container main-container">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 main-nav">
+            <div class="container">
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 nav-list">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="/admin/overview">Admin</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
-                                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-                            </form>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/posts">Posts</a>
                         </li>
-                    }
-                    else
-                    {
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/about">About</a>
                         </li>
-                    }
-                </ul>
-                <partial name="_LoginPartial"/>
+                        <li>
+                            <a class="nav-link text-dark" asp-area="" asp-page="/search">Search</a>
+                        </li>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="/admin/overview">Admin</a>
+                            </li>
+                            <li class="nav-item">
+                                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
+                                    <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
             </div>
+        </nav>
+    </header>
+    <main role="main" class="pb-3 container">
+        @RenderBody()
+    </main>
+    <footer class="bg-waves site-footer">
+        <div class="footer-content">
+            &copy;2025 - Depression book
         </div>
-    </nav>
-</header>
-<div class="container">
-        <main role="main" class="pb-3 container">
-
-            @RenderBody()
-        </main>
+    </footer>
 </div>
-
-<footer class="bg-waves site-footer">
-    <div class="footer-content">
-        &copy;2025 - Depression book
-    </div>
-</footer>
 
 @await RenderSectionAsync("Scripts", required: false)
 
-<script>
-    const canvas = document.getElementById('networkCanvas');
-    const ctx = canvas.getContext('2d');
-
-    // Canvas auf Fenstergröße einstellen
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    // Parameter für das Netzwerk
-    const particleCount = 100;
-    const maxDistance = 150;
-    const particles = [];
-
-    // Partikel-Klasse
-    class Particle {
-        constructor() {
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 2 + 1;
-            this.speedX = (Math.random() - 0.5) * 1;
-            this.speedY = (Math.random() - 0.5) * 1;
-            this.color = '#ffffff';
-        }
-
-        // Partikel aktualisieren
-        update() {
-            // Bewegung
-            this.x += this.speedX;
-            this.y += this.speedY;
-
-            // Am Rand umkehren
-            if (this.x < 0 || this.x > canvas.width) {
-                this.speedX = -this.speedX;
-            }
-
-            if (this.y < 0 || this.y > canvas.height) {
-                this.speedY = -this.speedY;
-            }
-        }
-
-        // Partikel zeichnen
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-        }
-    }
-
-    // Partikel erstellen
-    for (let i = 0; i < particleCount; i++) {
-        particles.push(new Particle());
-    }
-
-    // Verbindungen zwischen Partikeln zeichnen
-    function drawConnections() {
-        for (let i = 0; i < particles.length; i++) {
-            for (let j = i + 1; j < particles.length; j++) {
-                const dx = particles[i].x - particles[j].x;
-                const dy = particles[i].y - particles[j].y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                if (distance < maxDistance) {
-                    // Transparenz basierend auf Entfernung
-                    const opacity = 1 - (distance / maxDistance);
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.5})`;
-                    ctx.lineWidth = 1;
-
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.stroke();
-                }
-            }
-        }
-    }
-
-    // Animation
-    function animate() {
-        // Canvas löschen
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Hintergrund mit Transparenz zeichnen für Schleifeneffekt
-        ctx.fillStyle = 'rgba(15, 18, 37, 0.1)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Verbindungen zeichnen
-        drawConnections();
-
-        // Partikel aktualisieren und zeichnen
-        for (const particle of particles) {
-            particle.update();
-            particle.draw();
-        }
-
-        requestAnimationFrame(animate);
-    }
-
-    // Bei Größenänderung des Fensters Canvas anpassen
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-
-    // Animation starten
-    animate();
-</script>
+<script src="js/background.js"></script>
 </body>
 
 </html>

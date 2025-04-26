@@ -7,6 +7,7 @@
   --secondary: #e0e7ff; /* Light lavender for accents */
   --third: #24252a;
   --elements: #344d4e;
+  --nice: #2c3e50;
   --dark: #2c3e50; /* Deep blue-gray for text */
   --light: #f8fafc; /* Off-white for backgrounds */
   --accent: #7d3c98; /* Purple for subtle highlights */
@@ -105,7 +106,6 @@ h3 {
 
 p {
   margin-bottom: var(--space-md);
-  max-width: 70ch;
 }
 
 a {
@@ -151,6 +151,26 @@ code {
   max-width: 1200px;
   margin: 0 auto;
   padding: var(--space-md);
+}
+
+.text-align-left {
+  text-align: left;
+}
+
+.main-container {
+  padding-top: 0;
+  background-color: var(--third);
+}
+
+.text-formatting {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-gap: 20px;
+}
+
+.text-helper {
+  background-color: var(--elements);
 }
 
 .login-form {
