@@ -8,18 +8,18 @@
 
 <img src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.heilpraxisnet.de%2Fwp-content%2Fuploads%2F2017%2F06%2FDepressionen.jpg&f=1&nofb=1&ipt=0933d5f2249a5fc58b7e4d8caacd6dc66a9ff657f42a655efda4b855fb055259" width="100%" alt="banner image" />
 <div class="text-center">
-    <h1 class="display-4 text-align-left">Willkommen zum Depressionsbuch</h1>
+    <h1 class="display-4 text-align-left">🤗 Willkommen zum Depressionsbuch</h1>
     <div class="text-formatting">
         <p class="text-column1 text-column2 text-align-left">
             Ich möchte dich herzlich willkommen heißen auf meinem Blog. Hier findest du alles rund um das Thema Depressionen und psychische Krankheiten. Ich selbst war Jahre lang selbst betroffen von Depressionen, Angststörungen und Panikattacken. Mittlerweile geht es mir wieder besser und ich möchte mit dir meine Erfahrungen teilen, um dir mit deiner eigenen Erkrankung zu helfen egal ob Betroffener, Angehöriger oder einfach nur Interessierter bist.
             <br/><br/>
             Dich erwarten spannende Beiträge über meine eigene Krankheit, wie ich es wieder aus dem tiefen Loch heraus geschafft habe und den ein oder anderen Trick, um mit der Krankheit besser umgehen zu können. Des Weiteren soll es um Selbstentwicklung gehen und wie man dies mit der Krankheit in Einklang bringen kann.
         </p>
-        <div class="text-helper text-column3">
+        <div class="text-helper text-column3 turquoise">
             
         </div>
     </div>
-    <h2 class="text-align-left">Neulich erst erschienen:</h2>
+    <h2 class="text-align-left">👋 Neulich erst erschienen:</h2>
     <div class="post-grid">
         @foreach (PostPreviewModel recent in @Model.RecentPosts)
         {
@@ -38,10 +38,45 @@
             </section>
         }
     </div>
-    <div class="target-audience">
-        
+    <div class="text-center">
+        <div class="text-formatting-reverse">
+            <div class="text-helper text-column3 orange">
+
+            </div>
+            <p class="text-column1 text-column2 text-align-left">
+                2Ich möchte dich herzlich willkommen heißen auf meinem Blog. Hier findest du alles rund um das Thema Depressionen und psychische Krankheiten. Ich selbst war Jahre lang selbst betroffen von Depressionen, Angststörungen und Panikattacken. Mittlerweile geht es mir wieder besser und ich möchte mit dir meine Erfahrungen teilen, um dir mit deiner eigenen Erkrankung zu helfen egal ob Betroffener, Angehöriger oder einfach nur Interessierter bist.
+                <br/><br/>
+                2Dich erwarten spannende Beiträge über meine eigene Krankheit, wie ich es wieder aus dem tiefen Loch heraus geschafft habe und den ein oder anderen Trick, um mit der Krankheit besser umgehen zu können. Des Weiteren soll es um Selbstentwicklung gehen und wie man dies mit der Krankheit in Einklang bringen kann.
+            </p>
+        </div>
     </div>
-    <h2 class="text-align-left">Das willst du nicht verpassen:</h2>
+    <div>
+        <h2 class="text-align-left">🫵 Zu wem gehörst du</h2>
+        <div class="target-audience post-grid">
+            <div>
+                Betroffener
+            </div>
+            <div>
+                Angehöriger
+            </div>
+            <div>
+                Interessiert
+            </div>
+        </div>
+    </div>
+    <div class="text-center">
+        <div class="text-formatting">
+            <p class="text-column1 text-column2 text-align-left">
+                2Ich möchte dich herzlich willkommen heißen auf meinem Blog. Hier findest du alles rund um das Thema Depressionen und psychische Krankheiten. Ich selbst war Jahre lang selbst betroffen von Depressionen, Angststörungen und Panikattacken. Mittlerweile geht es mir wieder besser und ich möchte mit dir meine Erfahrungen teilen, um dir mit deiner eigenen Erkrankung zu helfen egal ob Betroffener, Angehöriger oder einfach nur Interessierter bist.
+                <br/><br/>
+                2Dich erwarten spannende Beiträge über meine eigene Krankheit, wie ich es wieder aus dem tiefen Loch heraus geschafft habe und den ein oder anderen Trick, um mit der Krankheit besser umgehen zu können. Des Weiteren soll es um Selbstentwicklung gehen und wie man dies mit der Krankheit in Einklang bringen kann.
+            </p>
+            <div class="text-helper text-column3 lila">
+
+            </div>
+        </div>
+    </div>
+    <h2 class="text-align-left">🕵️ Das willst du nicht verpassen:</h2>
     <div class="post-grid">
         @foreach (MostViewedPostsModel mostViewed in @Model.MostViewedPosts)
         {

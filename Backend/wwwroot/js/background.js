@@ -29,13 +29,6 @@
     '#7B4B94', // Lila
     '#50E3C2', // Mint
     '#F8A3EB', // Rosa
-        '#FF5E5B', // Rot
-        '#D8D8F6', // Hellblau
-        '#39E5B6', // Türkis
-        '#FFED66', // Gelb
-        '#00B2CA', // Blau
-        '#FF9505', // Orange
-        '#7B4B94'  // Lila
     ];
 
     // Zufällige Farbe aus der Palette wählen
@@ -380,6 +373,105 @@
     star.y = Math.random() * canvas.height;
 }
 });
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const element = document.getElementById('demo-element');
+        const speedControl = document.getElementById('speed');
+        const glowControl = document.getElementById('glow');
+        const widthControl = document.getElementById('width');
+        const presets = document.querySelectorAll('.preset');
 
-    // Animation starten
-    animate();
+        // Animation starten
+        animate();
+        
+        // Funktion zum Aktualisieren der Animation
+        function updateAnimation() {
+            const speed = 21 - speedControl.value; // Umkehrung damit höhere Werte schneller sind
+            const glow = glowControl.value;
+            const width = widthControl.value;
+
+            element.style.setProperty('--animation-speed', `${speed}s`);
+            document.documentElement.style.setProperty('--animation-speed', `${speed}s`);
+
+            // CSS wird direkt angewendet
+            element.style.cssText = `
+                    --glow-strength: ${glow}px;
+                    --border-width: ${width}px;
+                `;
+
+            // Dynamisch erstellte Styles für komplexere Änderungen
+            const styleElement = document.getElementById('dynamic-styles') || document.createElement('style');
+            styleElement.id = 'dynamic-styles';
+
+            styleElement.textContent = `
+                    .rainbow-border::before {
+                        filter: blur(${glow}px);
+                        animation: rainbowGlow ${speed}s linear infinite;
+                    }
+                    
+                    .rainbow-border::after {
+                        top: ${width}px;
+                        left: ${width}px;
+                        right: ${width}px;
+                        bottom: ${width}px;
+                    }
+                `;
+
+            if (!document.getElementById('dynamic-styles')) {
+                document.head.appendChild(styleElement);
+            }
+        }
+
+        // Farbschemata
+        const colorSchemes = {
+            rainbow: `linear-gradient(
+                    45deg, 
+                    red, orange, yellow, green, blue, indigo, violet, 
+                    red, orange, yellow, green, blue, indigo, violet
+                )`,
+            fire: `linear-gradient(
+                    45deg, 
+                    #ff0000, #ff8000, #ffff00, 
+                    #ff0000, #ff8000, #ffff00
+                )`,
+            ocean: `linear-gradient(
+                    45deg, 
+                    #0077be, #00ccff, #98f5ff, 
+                    #0077be, #00ccff, #98f5ff
+                )`,
+            neon: `linear-gradient(
+                    45deg, 
+                    #ff00ff, #00ffff, #ff00ff, #00ffff, 
+                    #ff00ff, #00ffff, #ff00ff, #00ffff
+                )`
+        };
+
+        // Event-Listeners für Steuerelemente
+        speedControl.addEventListener('input', updateAnimation);
+        glowControl.addEventListener('input', updateAnimation);
+        widthControl.addEventListener('input', updateAnimation);
+
+        // Event-Listeners für Farbschema-Presets
+        presets.forEach(preset => {
+            preset.addEventListener('click', function() {
+                const scheme = this.classList[1]; // Klassennamen als Identifier nutzen
+
+                const styleElement = document.getElementById('color-styles') || document.createElement('style');
+                styleElement.id = 'color-styles';
+
+                styleElement.textContent = `
+                        .rainbow-border::before {
+                            background: ${colorSchemes[scheme]};
+                            background-size: 400% 400%;
+                        }
+                    `;
+
+                if (!document.getElementById('color-styles')) {
+                    document.head.appendChild(styleElement);
+                }
+            });
+        });
+
+        // Anfängliche Anwendung der Einstellungen
+        updateAnimation();
+    });
