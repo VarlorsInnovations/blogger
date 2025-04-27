@@ -301,6 +301,79 @@ code {
   font-size: 1.1rem;
 }
 
+/* Grundlegende Box-Gestaltung */
+.elevated-box {
+  background-color: var(--third);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover-Effekt für mehr Interaktivität */
+.elevated-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 20px rgba(0, 0, 0, 0.12), 0 6px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Text-Formatierung */
+.elevated-box h2 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.elevated-box p {
+  color: white;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* Styling-Element: Farbige Akzent-Linie */
+.elevated-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #3498db, #9b59b6);
+}
+
+/* Variante mit einer anderen Akzentfarbe */
+.elevated-box.success::before {
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+}
+
+/* Variante mit einer anderen Akzentfarbe */
+.elevated-box.warning::before {
+  background: linear-gradient(90deg, #f39c12, #e67e22);
+}
+
+/* Variante mit einer anderen Akzentfarbe */
+.elevated-box.danger::before {
+  background: linear-gradient(90deg, #e74c3c, #c0392b);
+}
+
+/* Zusätzliches Styling-Element: Icon-Platzhalter */
+.elevated-box .icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #f8f9fa;
+  color: #333;
+}
+
 /* ===== NAVIGATION ===== */
 .main-nav {
   margin: var(--space-md) 0;
