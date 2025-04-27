@@ -158,7 +158,7 @@ code {
 }
 
 .main-container {
-  padding-top: 0;
+  padding: 0;
   background-color: var(--third);
 }
 
