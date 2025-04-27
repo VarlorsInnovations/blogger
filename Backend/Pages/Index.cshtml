@@ -23,7 +23,7 @@
     <div class="post-grid">
         @foreach (PostPreviewModel recent in @Model.RecentPosts)
         {
-            <section class="post-overview post-card">
+            <section class="post-card">
                 <h2><a asp-page="./Post" asp-route-id="@recent.UrlIdentifier">@recent.Title</a></h2>
                 <h4>Published at @recent.CreatedAt.ToString("MM/dd/yyyy")</h4>
                 <section class="tag-section">
@@ -80,7 +80,7 @@
     <div class="post-grid">
         @foreach (MostViewedPostsModel mostViewed in @Model.MostViewedPosts)
         {
-            <section class="post-overview post-card">
+            <section class="post-card elevated-box">
                 <h2><a asp-page="./Post" asp-route-id="@mostViewed.UrlIdentifier">@mostViewed.Title</a></h2>
                 <p>Views: @mostViewed.ViewCount</p>
                 <h4>Published at @mostViewed.CreatedAt.ToString("MM/dd/yyyy")</h4>

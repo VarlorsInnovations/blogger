@@ -410,6 +410,26 @@ code {
   transform: translateY(-3px);
 }
 
+.nav-item:nth-child(1) .nav-link {
+  color: rgb(255, 87, 51);
+}
+
+.nav-item:nth-child(2) .nav-link {
+  color: rgb(76, 175, 80);
+}
+
+.nav-item:nth-child(3) .nav-link {
+  color: rgba(33, 150, 243);
+}
+
+.nav-item:nth-child(4) .nav-link {
+  color: rgba(156, 39, 176);
+}
+
+.nav-item:nth-child(5) .nav-link {
+  color: rgb(255, 193, 7);
+}
+
 /* Individuelle Farben für jeden Navigationseintrag */
 .nav-item:nth-child(1) .nav-link:hover {
   background-color: rgba(255, 87, 51, 0.1);
@@ -475,7 +495,6 @@ code {
 }
 
 .post-card {
-  background-color: white;
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-md);
@@ -1107,7 +1126,7 @@ footer {
   .admin-posts,
   .post-editor,
   .stat-card {
-    background-color: #1a2234;
+    background-color: var(--third);
   }
 
   .search-input,

@@ -11,7 +11,7 @@
     <div class="post-grid">
         @foreach (var post in Model.Items)
         {
-            <section class="post-overview post-card">
+            <section class="post-card elevated-box">
                 <h2><a asp-page="./Post" asp-route-id="@post.UrlIdentifier">@post.Title</a></h2>
                 <h4>Published at @post.CreatedAt.ToString("MM/dd/yyyy")</h4>
                 <section class="tag-section">
